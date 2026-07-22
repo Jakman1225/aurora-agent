@@ -2,7 +2,7 @@
 
 > Historical note: this document describes the private 0.2.1 delivery.
 > Beginning with version 0.3.0, the `aurora-agent/` SDK is licensed
-> under Apache-2.0. See `LICENSE`, `NOTICE`, and `../LICENSING.md`.
+> under Apache-2.0. See `LICENSE` and `NOTICE`.
 
 Production-integration hardening:
 
