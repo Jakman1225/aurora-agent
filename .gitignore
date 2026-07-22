@@ -1,0 +1,15 @@
+.venv/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*.db
+*.sqlite
+*.sqlite3
+*.zip
+reports/
+
+# Self-serve quickstart runtime artifacts
+.aurora-quickstart/

@@ -1,0 +1,17 @@
+AURORA AGENT EVIDENCE SDK v0.2 NON-CLAIMS
+
+The SDK does not prove capture completeness or absence of bypass paths.
+The SDK does not prove that every action performed by an agent was observed.
+The SDK does not prove that a client-supplied digest corresponds to any undisclosed raw value.
+DIGEST_ONLY prevents raw values from entering the SDK outbox and AURORA payload storage, but the server records a CLIENT_COMMITMENT rather than independently recomputing the source digest.
+REDACTED mode does not prove that the redaction is complete or sufficient.
+FULL_PAYLOAD mode may persist sensitive values locally and remotely and must be enabled deliberately.
+A durable local outbox does not prove successful remote receipt until the item is ACKNOWLEDGED.
+A finalized compositional graph proves consistency of stored commitments and links; it does not establish causal truth or semantic correctness of the underlying event claims.
+A local commitment is not an external anchor or external timestamp.
+A local VALID result does not verify an AURORA D5.4 RFC 3161 anchor export.
+A declared outcome evidence strength is not physical-world truth.
+An operation reference is not independent provider confirmation unless separately retrieved and verified.
+JAKROW D3 outcome strength O0 remains local-runtime evidence with provider acknowledgement NOT_PRESENT.
+The SDK does not establish certificate-path trust, revocation status, qualified timestamp status, legal authorization, causality, liability, admissibility, fairness, regulatory compliance, or universal runtime coverage.
+The private SDK release does not establish public-release readiness, product-market fit, or standards conformance.

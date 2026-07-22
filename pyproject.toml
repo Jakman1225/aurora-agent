@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=82,<83"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aurora-agent"
+version = "0.3.0"
+description = "Local-first runtime evidence SDK with a self-serve AURORA quickstart"
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.11,<3.14"
+authors = [{ name = "AURORA" }]
+keywords = ["ai-agents", "evidence", "auditability", "runtime", "compliance"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Operating System :: OS Independent",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://auroraseal.com"
+Documentation = "https://auroraseal.com/quickstart"
+
+[project.optional-dependencies]
+test = ["pytest==9.0.2"]
+
+[project.scripts]
+aurora-agent = "aurora_agent.command:main"
+aurora-agent-verify = "aurora_agent.cli:main"
+aurora-agent-ingest = "aurora_agent.ingestion_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]

@@ -1,0 +1,29 @@
+AURORA-AGENT PUBLIC DISTRIBUTION APPROVAL RECORD
+================================================
+
+The historical filename is retained for release-traceability. The distribution
+blocker recorded by this file has been satisfied.
+
+Approval date: 2026-07-22
+Package: aurora-agent
+Approved version: 0.3.0
+License: Apache License, Version 2.0 (SPDX: Apache-2.0)
+Approved scope: the aurora-agent/ directory and Python wheel/source archives
+generated solely from that directory.
+
+Explicitly excluded from this approval and license scope:
+- AURORA backend, frontend, hosted verification, infrastructure, and services;
+- JAKROW repository content outside aurora-agent/;
+- AURORA and JAKROW trademarks, names, logos, and branding.
+
+Release conditions that remain operational rather than licensing blockers:
+1. The final release tag and package version must match.
+2. Wheel and source distribution must pass build and metadata checks.
+3. TestPyPI and production PyPI Trusted Publishers must match their respective
+   workflows and protected environments (`testpypi` and `pypi`).
+4. Production publication must run from the `aurora-agent-v0.3.0` tag.
+5. Public `/quickstart` deployment must wait until a clean installation from
+   the public package index succeeds.
+
+Approval statement:
+"The aurora-agent SDK directory and its distribution artifacts are publicly distributed under the Apache License 2.0. The AURORA backend, frontend, hosting services, and the remaining components of JAKROW are explicitly excluded from the scope of this license."
