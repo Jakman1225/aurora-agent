@@ -23,7 +23,7 @@ from .ingestion_outbox import IngestionOutbox, OutboxConflict, OutboxItem
 from .adapters import ClaudeAgentCaptureAdapter, JAKROWD3IngestionObserver
 from .quickstart import QuickstartError, QuickstartResult, QuickstartRunner
 
-__version__ = "0.3.0"
+__version__ = "0.3.1"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",

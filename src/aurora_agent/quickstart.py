@@ -14,7 +14,7 @@ from .ingestion_http import IngestionTransportError, UrllibTransport
 
 DEFAULT_API_BASE_URL = "https://aurora-mvp-production.up.railway.app"
 DEFAULT_FRONTEND_URL = "https://auroraseal.com"
-QUICKSTART_RELEASE_ID = "aurora-agent-0.3.0"
+QUICKSTART_RELEASE_ID = "aurora-agent-0.3.1"
 
 
 class QuickstartError(RuntimeError):

@@ -1,29 +1,46 @@
 AURORA-AGENT PUBLIC DISTRIBUTION APPROVAL RECORD
 ================================================
 
-The historical filename is retained for release-traceability. The distribution
-blocker recorded by this file has been satisfied.
+This record documents approval for the public distribution of the specified
+aurora-agent release. It does not extend the license scope to AURORA hosted
+services or proprietary JAKROW components.
 
-Approval date: 2026-07-22
+Approval date: 2026-07-24
 Package: aurora-agent
-Approved version: 0.3.0
+Approved version: 0.3.1
+Approved release tag: v0.3.1
 License: Apache License, Version 2.0 (SPDX: Apache-2.0)
-Approved scope: the aurora-agent/ directory and Python wheel/source archives
-generated solely from that directory.
+
+Approved scope:
+- the aurora-agent Python package source under src/aurora_agent/;
+- package metadata and public documentation required for distribution;
+- examples and independent verification challenges included in the source
+  distribution;
+- Python wheel and source archives generated from this public repository.
 
 Explicitly excluded from this approval and license scope:
-- AURORA backend, frontend, hosted verification, infrastructure, and services;
-- JAKROW repository content outside aurora-agent/;
+- the AURORA backend, frontend, hosted verification, infrastructure, and
+  services;
+- JAKROW repository content and components not included in this public
+  aurora-agent repository;
 - AURORA and JAKROW trademarks, names, logos, and branding.
 
-Release conditions that remain operational rather than licensing blockers:
-1. The final release tag and package version must match.
-2. Wheel and source distribution must pass build and metadata checks.
-3. TestPyPI and production PyPI Trusted Publishers must match their respective
-   workflows and protected environments (`testpypi` and `pypi`).
-4. Production publication must run from the `aurora-agent-v0.3.0` tag.
-5. Public `/quickstart` deployment must wait until a clean installation from
-   the public package index succeeds.
+Release conditions:
+1. The release tag must be v0.3.1 and must match the version declared in
+   pyproject.toml.
+2. The complete test suite must pass on supported Python versions.
+3. Wheel and source distributions must pass build and metadata validation.
+4. TestPyPI and production PyPI Trusted Publishers must match their respective
+   GitHub Actions workflows and protected environments (`testpypi` and `pypi`).
+5. Release artifacts must include SHA-256 checksums, a CycloneDX SBOM, and
+   GitHub-native build provenance attestations.
+6. Production publication must run from the approved v0.3.1 tag.
+7. The public quickstart must be validated using a clean installation from the
+   public package index after publication.
 
 Approval statement:
-"The aurora-agent SDK directory and its distribution artifacts are publicly distributed under the Apache License 2.0. The AURORA backend, frontend, hosting services, and the remaining components of JAKROW are explicitly excluded from the scope of this license."
+"The aurora-agent SDK source and its generated distribution artifacts are
+approved for public distribution under the Apache License 2.0. The AURORA
+backend, frontend, hosted services, infrastructure, and JAKROW components
+outside this public repository are explicitly excluded from the scope of this
+license."

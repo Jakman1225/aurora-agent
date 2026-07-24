@@ -28,8 +28,8 @@ def test_public_distribution_approval_record_matches_release() -> None:
         encoding="utf-8"
     )
 
-    assert "blocker recorded by this file has been satisfied" in approval
-    assert "Approved version: 0.3.0" in approval
+    assert "AURORA-AGENT PUBLIC DISTRIBUTION APPROVAL RECORD" in approval
+    assert "Approved version: 0.3.1" in approval
     assert "SPDX: Apache-2.0" in approval
     assert "AURORA backend" in approval
-    assert "JAKROW repository content outside aurora-agent/" in approval
+    assert "JAKROW repository content and components not included" in approval

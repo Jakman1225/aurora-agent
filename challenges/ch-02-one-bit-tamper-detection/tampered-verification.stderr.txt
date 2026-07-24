@@ -1,2 +1,0 @@
-Using configuration from C:/Program Files/Git/mingw64/etc/ssl//openssl.cnf
-68750000:error:17800067:time stamp routines:ts_check_imprints:message imprint mismatch:../openssl-3.5.6/crypto/ts/ts_rsp_verify.c:508:

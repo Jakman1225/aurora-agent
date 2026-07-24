@@ -63,7 +63,7 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.3.0` |
+| version | `0.3.1` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
@@ -74,6 +74,7 @@ aurora-agent outbox flush --outbox PATH
 - [`API_REFERENCE.md`](API_REFERENCE.md)
 - [`THREAT_MODEL.md`](THREAT_MODEL.md)
 - [`NON_CLAIMS.txt`](NON_CLAIMS.txt)
+- [`RELEASE_NOTES_0.3.1.md`](RELEASE_NOTES_0.3.1.md)
 - [`RELEASE_NOTES_0.3.0.md`](RELEASE_NOTES_0.3.0.md)
 
 ## Independent verification challenges
