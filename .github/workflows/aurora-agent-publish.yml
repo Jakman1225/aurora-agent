@@ -30,7 +30,9 @@ jobs:
           import tomllib
           from pathlib import Path
 
-          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          project = tomllib.loads(
+              Path("pyproject.toml").read_text(encoding="utf-8")
+          )["project"]
 
           assert project["name"] == "aurora-agent", project["name"]
           assert project["license"] == "Apache-2.0", project["license"]
@@ -138,7 +140,16 @@ jobs:
           name: python-package-distributions
           path: dist/
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Prepare PyPI distributions
+        shell: bash
+        run: |
+          mkdir -p pypi-dist
+          cp dist/*.whl dist/*.tar.gz pypi-dist/
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: pypi-dist/
 
   github-release:
     if: ${{ inputs.confirm_distribution_approved }}
