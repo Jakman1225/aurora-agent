@@ -89,7 +89,6 @@ jobs:
           cyclonedx-py environment .sbom-venv/bin/python \
             --pyproject pyproject.toml \
             --mc-type library \
-            --output-reproducible \
             --spec-version 1.6 \
             --output-format JSON \
             --output-file "dist/aurora-agent-${RELEASE_VERSION}.cdx.json"
