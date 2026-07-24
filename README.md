@@ -33,7 +33,8 @@ It provides two compatible surfaces:
 
 ## Self-serve quickstart
 
-After creating a Sandbox API key at `https://auroraseal.com/app/quickstart`:
+After creating a Sandbox API key at
+`https://auroraseal.com/app/quickstart`:
 
 ```bash
 pip install aurora-agent
@@ -43,9 +44,11 @@ aurora-agent quickstart
 
 The command creates a controlled sample record, commits evidence locally before
 a local SQLite ledger operation, finalizes the graph, verifies it server-side,
-and prints the authenticated Viewer URL. It does not perform an external
-payment, message, purchase, or customer operation. The default capture mode is
-`DIGEST_ONLY`; the API key is not persisted in the outbox.
+and prints the authenticated Viewer URL.
+
+It does not perform an external payment, message, purchase, or customer
+operation. The default capture mode is `DIGEST_ONLY`; the API key is not
+persisted in the outbox.
 
 Recovery commands:
 
@@ -73,13 +76,35 @@ aurora-agent outbox flush --outbox PATH
 - [`NON_CLAIMS.txt`](NON_CLAIMS.txt)
 - [`RELEASE_NOTES_0.3.0.md`](RELEASE_NOTES_0.3.0.md)
 
+## Independent verification challenges
+
+AURORA publishes two OpenSSL-only RFC 3161 verification exercises. They require
+no AURORA SDK, API key, backend access, or custom verifier.
+
+- [CH-01 — Independently verify the timestamp token](./challenges/ch-01-independent-rfc3161-verification/)
+- [CH-02 — Change one bit and reproduce verification failure](./challenges/ch-02-one-bit-tamper-detection/)
+
+These challenges demonstrate cryptographic binding and tamper detection for the
+supplied bytes.
+
+They do not establish capture completeness, legal authority, decision
+correctness, external-provider acknowledgement, or external-world truth.
+
 ## What this SDK does not claim
 
-The SDK does not claim capture completeness, absence of bypass paths, causal
-truth, external-provider acknowledgement, qualified timestamp status, or legal
-compliance. `DIGEST_ONLY` protects raw values from the local outbox and AURORA
-payload storage, but AURORA can verify only the supplied client commitment
-unless the raw value is transmitted separately.
+The SDK does not claim:
+
+- capture completeness;
+- absence of bypass paths;
+- causal or external-world truth;
+- external-provider acknowledgement;
+- qualified timestamp status;
+- legal authority or legal compliance;
+- decision correctness, fairness, or policy validity.
+
+`DIGEST_ONLY` protects raw values from the local outbox and AURORA payload
+storage, but AURORA can verify only the supplied client commitment unless the
+raw value is transmitted separately.
 
 ## License
 

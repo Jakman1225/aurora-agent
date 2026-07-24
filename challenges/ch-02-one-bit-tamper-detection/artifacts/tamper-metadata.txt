@@ -1,0 +1,6 @@
+offset=32
+bit_mask=0x01
+original_byte=0x32
+tampered_byte=0x33
+original_sha256=97595ab4c4946754498bf77d3f62ae03a2aced1ecdbcf63be7d087b3a8974873
+tampered_sha256=a7bcc1eb5a7331bcb966b33e07f45a095e673bdb88a03cddf5b2bd82a332a47c
