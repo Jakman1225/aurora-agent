@@ -1,14 +1,27 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import sys
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
+
+# This test exercises the proprietary JAKROW D3 reference runtime. The public
+# aurora-agent repository intentionally does not distribute evidence_contract.
+# Skip only when that package is absent; if it is installed but broken, imports
+# below must still fail normally.
+if importlib.util.find_spec("evidence_contract") is None:
+    pytest.skip(
+        "requires the proprietary JAKROW evidence_contract package",
+        allow_module_level=True,
+    )
 
 from aurora_agent import IngestionClient, JAKROWD3IngestionObserver
 from aurora_agent.ingestion_http import HttpResponse, IngestionTransportError

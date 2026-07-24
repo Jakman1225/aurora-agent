@@ -1,0 +1,72 @@
+name: Publish aurora-agent to TestPyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_test_distribution:
+        description: "I confirm this is a TestPyPI validation release"
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    if: ${{ inputs.confirm_test_distribution }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine
+
+      - name: Verify package identity and license
+        run: |
+          python - <<'PY'
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+          assert project["name"] == "aurora-agent"
+          assert project["license"] == "Apache-2.0"
+          assert project["license-files"] == ["LICENSE", "NOTICE"]
+          assert project["version"]
+          PY
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Validate distributions
+        run: python -m twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: testpypi-python-package-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    if: ${{ inputs.confirm_test_distribution }}
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/aurora-agent
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: testpypi-python-package-distributions
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/

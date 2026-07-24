@@ -1,0 +1,173 @@
+name: Publish aurora-agent to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_distribution_approved:
+        description: "I confirm Apache-2.0 scope approval and public PyPI publication"
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release:
+    if: ${{ inputs.confirm_distribution_approved }}
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release-metadata.outputs.version }}
+      tag: ${{ steps.release-metadata.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag, package identity, version, and license
+        id: release-metadata
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          import tomllib
+          from pathlib import Path
+
+          project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+
+          assert project["name"] == "aurora-agent", project["name"]
+          assert project["license"] == "Apache-2.0", project["license"]
+          assert project["license-files"] == ["LICENSE", "NOTICE"], project["license-files"]
+
+          version = project["version"]
+          expected_tag = f"v{version}"
+          actual_ref = os.environ["GITHUB_REF"]
+          expected_ref = f"refs/tags/{expected_tag}"
+
+          if actual_ref != expected_ref:
+              raise SystemExit(
+                  f"Run this workflow from tag {expected_tag}; current ref is {actual_ref}"
+              )
+
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+              output.write(f"version={version}\n")
+              output.write(f"tag={expected_tag}\n")
+          PY
+
+  build-and-attest:
+    if: ${{ inputs.confirm_distribution_approved }}
+    needs: validate-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install release tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine "cyclonedx-bom==7.3.1"
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Validate distributions
+        run: python -m twine check dist/*
+
+      - name: Generate CycloneDX SBOM from the built wheel
+        env:
+          RELEASE_VERSION: ${{ needs.validate-release.outputs.version }}
+        shell: bash
+        run: |
+          python -m venv .sbom-venv
+          .sbom-venv/bin/python -m pip install --upgrade pip
+          .sbom-venv/bin/python -m pip install dist/*.whl
+
+          cyclonedx-py environment .sbom-venv/bin/python \
+            --pyproject pyproject.toml \
+            --mc-type library \
+            --output-reproducible \
+            --spec-version 1.6 \
+            --output-format JSON \
+            --output-file "dist/aurora-agent-${RELEASE_VERSION}.cdx.json"
+
+      - name: Generate SHA-256 checksums
+        shell: bash
+        run: |
+          cd dist
+          sha256sum ./*.whl ./*.tar.gz ./*.cdx.json > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Attest release artifact provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/*.cdx.json
+            dist/SHA256SUMS.txt
+
+      - name: Attach the CycloneDX SBOM to the wheel
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/*.whl
+          sbom-path: dist/aurora-agent-${{ needs.validate-release.outputs.version }}.cdx.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    if: ${{ inputs.confirm_distribution_approved }}
+    needs:
+      - validate-release
+      - build-and-attest
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/aurora-agent
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+
+  github-release:
+    if: ${{ inputs.confirm_distribution_approved }}
+    needs:
+      - validate-release
+      - build-and-attest
+      - publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Create GitHub Release and attach distributions, SBOM, and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ needs.validate-release.outputs.tag }}
+          RELEASE_VERSION: ${{ needs.validate-release.outputs.version }}
+        shell: bash
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release upload "$RELEASE_TAG" dist/* --clobber
+          else
+            gh release create "$RELEASE_TAG" dist/* \
+              --verify-tag \
+              --title "aurora-agent ${RELEASE_VERSION}" \
+              --generate-notes
+          fi

@@ -24,7 +24,7 @@ def test_apache_2_license_metadata_and_files_are_present() -> None:
 
 
 def test_public_distribution_approval_record_matches_release() -> None:
-    approval = (PACKAGE_ROOT / "PYPI_DISTRIBUTION_APPROVAL_REQUIRED.txt").read_text(
+    approval = (PACKAGE_ROOT / "DISTRIBUTION_APPROVAL.txt").read_text(
         encoding="utf-8"
     )
 

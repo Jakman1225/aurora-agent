@@ -1,8 +1,18 @@
 include README.md
 include LICENSE
 include NOTICE
-include SELF_SERVE_QUICKSTART.md
-include RELEASE_NOTES_0.3.0.md
-include PYPI_DISTRIBUTION_APPROVAL_REQUIRED.txt
+include DISTRIBUTION_APPROVAL.txt
 include NON_CLAIMS.txt
+include API_REFERENCE.md
+include QUICKSTART.md
+include INGESTION_QUICKSTART.md
+include SELF_SERVE_QUICKSTART.md
+include THREAT_MODEL.md
+include LICENSE_HISTORY.md
+include RELEASE_NOTES_*.md
+
 recursive-include examples *.py
+recursive-include challenges *
+
+global-exclude __pycache__
+global-exclude *.py[cod]
