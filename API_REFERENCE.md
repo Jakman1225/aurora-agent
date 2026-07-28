@@ -301,3 +301,26 @@ PENDING
 ```
 
 A crash while `SUBMITTING` is recovered to `PENDING`. Queue ordering is global by insertion ID and stable per run by ordinal.
+
+
+---
+
+# v0.4 AI Output API
+
+## `AIOutputClient(...)`
+
+Creates, seals, verifies, reads, and downloads bundles for
+`auroraseal.evidence` v3 AI Output records.
+
+Methods:
+
+- `create(request, idempotency_key=None)`
+- `create_digest_only(...)`
+- `create_redacted(...)`
+- `create_full_payload(...)`
+- `get(record_id)`
+- `seal(record_id, idempotency_key=None)`
+- `verify(record_id)`
+- `download_bundle(record_id, destination)`
+
+See `AI_OUTPUT_QUICKSTART.md`.

@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.3 with local and remote ingestion surfaces."""
+"""AURORA Agent Evidence SDK v0.4 with action, ingestion, and AI Output surfaces."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -22,8 +22,20 @@ from .ingestion import IngestionClient, RunSession
 from .ingestion_outbox import IngestionOutbox, OutboxConflict, OutboxItem
 from .adapters import ClaudeAgentCaptureAdapter, JAKROWD3IngestionObserver
 from .quickstart import QuickstartError, QuickstartResult, QuickstartRunner
+from .ai_outputs import (
+    AI_OUTPUT_CAPTURE_MODES,
+    AI_OUTPUT_FORMATS,
+    AI_OUTPUT_PROFILE_ID,
+    AI_OUTPUT_PROFILE_VERSION,
+    AI_OUTPUT_SCHEMA_ID,
+    AI_OUTPUT_SCHEMA_VERSION,
+    AIOutputAPIError,
+    AIOutputClient,
+    AIOutputTransportError,
+    content_digest,
+)
 
-__version__ = "0.3.1"
+__version__ = "0.4.0"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",
@@ -36,4 +48,8 @@ __all__ = [
     "ClaudeAgentCaptureAdapter",
     "JAKROWD3IngestionObserver",
     "QuickstartError", "QuickstartResult", "QuickstartRunner",
+    "AI_OUTPUT_CAPTURE_MODES", "AI_OUTPUT_FORMATS", "AI_OUTPUT_PROFILE_ID",
+    "AI_OUTPUT_PROFILE_VERSION", "AI_OUTPUT_SCHEMA_ID", "AI_OUTPUT_SCHEMA_VERSION",
+    "AIOutputAPIError", "AIOutputClient", "AIOutputTransportError",
+    "content_digest",
 ]
