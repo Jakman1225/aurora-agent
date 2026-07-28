@@ -1,6 +1,6 @@
 # AuroraSeal AI Output v3 Quickstart
 
-Requires `aurora-agent>=0.4.0` and an AURORA API key with read/write scope.
+Requires `aurora-agent>=0.5.0` and an AURORA API key with read/write scope.
 
 ```python
 from aurora_agent import AIOutputClient
@@ -36,6 +36,12 @@ print(record_id)
 print(sealed["record"]["seal"]["seal_state"])
 print(verified["status"])
 print(bundle_path)
+
+# Link the sealed output to an existing sealed AI decision.
+relationship = client.link_decision(record_id, "ATP-20260728-EXAMPLE")
+link_id = relationship["subject"]["link_id"]
+print(client.verify_relationship(link_id)["status"])
+print(client.list_linked_decisions(record_id))
 ```
 
 ## Capture modes
@@ -50,3 +56,10 @@ be represented as strings, for example `"0.82"`.
 AuroraSeal verifies record integrity, signature evidence, and the stored RFC 3161
 validation result. It does not establish output correctness, fairness,
 lawfulness, policy validity, or factual truth.
+
+## AI Output ↔ Decision relationship boundary
+
+`link_decision(...)` creates a separate immutable signed relationship proof.
+It does not rewrite the AI Output or decision record. It also does not prove
+that the output caused, justified, or made the decision correct. The public
+proof URL returned by the API states this boundary explicitly.

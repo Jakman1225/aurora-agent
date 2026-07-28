@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.4 with action, ingestion, and AI Output surfaces."""
+"""AURORA Agent Evidence SDK v0.5 with action, ingestion, and AI Output surfaces."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -35,7 +35,7 @@ from .ai_outputs import (
     content_digest,
 )
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",

@@ -161,3 +161,53 @@ def test_download_bundle_is_atomic_and_rejects_non_zip(tmp_path: Path):
 
 def test_content_digest_matches_canonical_commitment():
     assert content_digest({"b": 2, "a": 1}) == content_digest({"a": 1, "b": 2})
+
+
+def test_relationship_methods_use_first_class_endpoints():
+    proof = {
+        "subject": {
+            "link_id": "asrel_1",
+            "ai_output": {"record_id": "ase_1"},
+            "ai_decision": {"record_id": "decision_1"},
+        }
+    }
+    transport = FakeTransport(
+        [
+            _json_response(201, proof),
+            _json_response(200, proof),
+            _json_response(200, {"status": "VALID"}),
+            AIOutputHttpResponse(
+                status=200,
+                body=json.dumps([{"link_id": "asrel_1"}]).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            ),
+            AIOutputHttpResponse(
+                status=200,
+                body=json.dumps([{"link_id": "asrel_1"}]).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+            ),
+        ]
+    )
+    client = AIOutputClient(base_url="https://example.test", api_key="ak", transport=transport)
+    created = client.link_decision(
+        "ase_1",
+        "decision_1",
+        idempotency_key="link-decision-0001",
+    )
+    assert created["subject"]["link_id"] == "asrel_1"
+    assert client.get_relationship("asrel_1")["subject"]["link_id"] == "asrel_1"
+    assert client.verify_relationship("asrel_1")["status"] == "VALID"
+    assert client.list_linked_decisions("ase_1")[0]["link_id"] == "asrel_1"
+    assert client.list_decision_outputs("decision_1")[0]["link_id"] == "asrel_1"
+    assert [call["endpoint"] for call in transport.calls] == [
+        "/v1/ai-output-decision-links",
+        "/v1/ai-output-decision-links/asrel_1",
+        "/v1/ai-output-decision-links/asrel_1/verify",
+        "/v1/ai-outputs/ase_1/decisions",
+        "/v1/audit-records/decision_1/ai-outputs",
+    ]
+    payload = json.loads(transport.calls[0]["body"].decode("utf-8"))
+    assert payload == {
+        "ai_output_record_id": "ase_1",
+        "decision_record_id": "decision_1",
+    }

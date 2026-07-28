@@ -305,7 +305,7 @@ A crash while `SUBMITTING` is recovered to `PENDING`. Queue ordering is global b
 
 ---
 
-# v0.4 AI Output API
+# v0.5 AI Output API
 
 ## `AIOutputClient(...)`
 
@@ -322,5 +322,15 @@ Methods:
 - `seal(record_id, idempotency_key=None)`
 - `verify(record_id)`
 - `download_bundle(record_id, destination)`
+- `link_decision(ai_output_record_id, decision_record_id, idempotency_key=None)`
+- `get_relationship(link_id)`
+- `verify_relationship(link_id)`
+- `list_linked_decisions(ai_output_record_id)`
+- `list_decision_outputs(decision_record_id)`
+
+Relationship creation requires both source records to be cryptographically
+sealed and owned by the same organization. The returned object is a separate
+immutable signed registry proof. It does not mutate either source record or
+prove causal, legal, policy, fairness, or correctness claims.
 
 See `AI_OUTPUT_QUICKSTART.md`.

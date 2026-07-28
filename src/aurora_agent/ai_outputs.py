@@ -213,7 +213,8 @@ class AIOutputClient:
         endpoint: str,
         payload: Optional[Mapping[str, Any]] = None,
         idempotency_key: Optional[str] = None,
-    ) -> dict[str, Any]:
+        allow_list: bool = False,
+    ) -> Any:
         body = canonical_bytes(dict(payload)) if payload is not None else b""
         response = self.transport.request(
             method=method,
@@ -224,6 +225,12 @@ class AIOutputClient:
         )
         if response.status < 200 or response.status >= 300:
             _raise_api_error(response)
+        if allow_list:
+            try:
+                value = json.loads(response.body.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise AIOutputTransportError("AURORA returned invalid JSON") from exc
+            return value
         return _json_object(response.body)
 
     def create(
@@ -364,6 +371,57 @@ class AIOutputClient:
             method="POST",
             endpoint=f"/v1/ai-outputs/{record_id}/verify",
         )
+
+    def link_decision(
+        self,
+        ai_output_record_id: str,
+        decision_record_id: str,
+        *,
+        idempotency_key: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Create one immutable AURORA-signed output-to-decision relationship proof."""
+
+        return self._json_request(
+            method="POST",
+            endpoint="/v1/ai-output-decision-links",
+            payload={
+                "ai_output_record_id": ai_output_record_id,
+                "decision_record_id": decision_record_id,
+            },
+            idempotency_key=idempotency_key or _idempotency_key("link-decision"),
+        )
+
+    def get_relationship(self, link_id: str) -> dict[str, Any]:
+        return self._json_request(
+            method="GET",
+            endpoint=f"/v1/ai-output-decision-links/{link_id}",
+        )
+
+    def verify_relationship(self, link_id: str) -> dict[str, Any]:
+        return self._json_request(
+            method="POST",
+            endpoint=f"/v1/ai-output-decision-links/{link_id}/verify",
+        )
+
+    def list_linked_decisions(self, ai_output_record_id: str) -> list[dict[str, Any]]:
+        value = self._json_request(
+            method="GET",
+            endpoint=f"/v1/ai-outputs/{ai_output_record_id}/decisions",
+            allow_list=True,
+        )
+        if not isinstance(value, list):
+            raise AIOutputTransportError("AURORA returned a non-list relationship response")
+        return value
+
+    def list_decision_outputs(self, decision_record_id: str) -> list[dict[str, Any]]:
+        value = self._json_request(
+            method="GET",
+            endpoint=f"/v1/audit-records/{decision_record_id}/ai-outputs",
+            allow_list=True,
+        )
+        if not isinstance(value, list):
+            raise AIOutputTransportError("AURORA returned a non-list relationship response")
+        return value
 
     def download_bundle(self, record_id: str, destination: str | Path) -> Path:
         response = self.transport.request(
