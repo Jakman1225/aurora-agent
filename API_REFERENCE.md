@@ -334,3 +334,38 @@ immutable signed registry proof. It does not mutate either source record or
 prove causal, legal, policy, fairness, or correctness claims.
 
 See `AI_OUTPUT_QUICKSTART.md`.
+
+
+---
+
+# v0.6 AI Decision API
+
+## `AIDecisionClient(...)`
+
+Creates, lists, reads, seals, verifies, and downloads offline bundles for
+`auroraseal.evidence` v3 AI Decision records.
+
+Methods:
+
+- `list(limit=100, offset=0)`
+- `create(request, idempotency_key=None)`
+- `get(record_id)`
+- `seal(record_id, idempotency_key=None)`
+- `verify(record_id)`
+- `download_bundle(record_id, destination)`
+
+Contract helpers:
+
+- `canonical_decimal(value)`
+- `build_score_interpretation(...)`
+- `build_policy_context(...)`
+- `build_evidence_flag(...)`
+- `build_evidence_assessment(...)`
+- `build_ai_decision_request(...)`
+
+Numeric score values are canonical decimal strings. Floats and exponent
+notation are rejected. Score, policy, outcome, and completeness fields remain
+operator-declared context and do not establish correctness, fairness, legality,
+policy applicability, or external-world truth.
+
+See `AI_DECISION_QUICKSTART.md`.

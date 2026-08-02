@@ -11,7 +11,7 @@ to [AURORA](https://auroraseal.com).
 pip install aurora-agent
 ```
 
-It provides three compatible surfaces:
+It provides four compatible surfaces:
 
 1. **Local action evidence** — proposal, authorization/policy, precommit,
    execution, outcome, deterministic bundle export, and offline verification.
@@ -21,6 +21,9 @@ It provides three compatible surfaces:
 3. **AI Output evidence** — first-class AuroraSeal v3 records with digest-only,
    redacted, or full-payload capture, sealing, verification, bundle export, and
    signed links to sealed AI decision records.
+4. **AI Decision evidence** — first-class decision records that preserve
+   operator-declared score interpretation, policy context, evidence gaps,
+   uncertainty, sealing, public metadata verification, and offline bundles.
 
 ## Core properties
 
@@ -66,11 +69,12 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.5.0` |
+| version | `0.6.0` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
 
+- [`AI_DECISION_QUICKSTART.md`](AI_DECISION_QUICKSTART.md)
 - [`AI_OUTPUT_QUICKSTART.md`](AI_OUTPUT_QUICKSTART.md)
 - [`SELF_SERVE_QUICKSTART.md`](SELF_SERVE_QUICKSTART.md)
 - [`QUICKSTART.md`](QUICKSTART.md)
@@ -78,6 +82,7 @@ aurora-agent outbox flush --outbox PATH
 - [`API_REFERENCE.md`](API_REFERENCE.md)
 - [`THREAT_MODEL.md`](THREAT_MODEL.md)
 - [`NON_CLAIMS.txt`](NON_CLAIMS.txt)
+- [`RELEASE_NOTES_0.6.0.md`](RELEASE_NOTES_0.6.0.md)
 - [`RELEASE_NOTES_0.5.0.md`](RELEASE_NOTES_0.5.0.md)
 - [`RELEASE_NOTES_0.4.0.md`](RELEASE_NOTES_0.4.0.md)
 - [`RELEASE_NOTES_0.3.1.md`](RELEASE_NOTES_0.3.1.md)
