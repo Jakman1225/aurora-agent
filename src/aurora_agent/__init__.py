@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.6 with action, ingestion, AI Output, and AI Decision surfaces."""
+"""AURORA Agent Evidence SDK v0.7 with action, ingestion, AI Output, AI Decision, and Human Approval surfaces."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -42,6 +42,17 @@ from .ai_decisions import (
     build_score_interpretation,
     canonical_decimal,
 )
+from .human_approval import (
+    HUMAN_APPROVAL_DECLARED_STATES,
+    HUMAN_APPROVAL_PROFILE_ID,
+    HUMAN_APPROVAL_PROFILE_VERSION,
+    HUMAN_APPROVAL_REVIEW_LEVELS,
+    HumanApprovalAPIError,
+    HumanApprovalClient,
+    HumanApprovalTransportError,
+    build_approval_requirement,
+    build_policy_requirement_binding,
+)
 from .ai_outputs import (
     AI_OUTPUT_CAPTURE_MODES,
     AI_OUTPUT_FORMATS,
@@ -55,7 +66,7 @@ from .ai_outputs import (
     content_digest,
 )
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",
@@ -72,6 +83,10 @@ __all__ = [
     "AI_OUTPUT_PROFILE_VERSION", "AI_OUTPUT_SCHEMA_ID", "AI_OUTPUT_SCHEMA_VERSION",
     "AIOutputAPIError", "AIOutputClient", "AIOutputTransportError",
     "content_digest",
+    "HUMAN_APPROVAL_DECLARED_STATES", "HUMAN_APPROVAL_PROFILE_ID",
+    "HUMAN_APPROVAL_PROFILE_VERSION", "HUMAN_APPROVAL_REVIEW_LEVELS",
+    "HumanApprovalAPIError", "HumanApprovalClient", "HumanApprovalTransportError",
+    "build_approval_requirement", "build_policy_requirement_binding",
     "AI_DECISION_CAPTURE_MODES", "AI_DECISION_EVIDENCE_COMPLETENESS",
     "AI_DECISION_PROFILE_ID", "AI_DECISION_PROFILE_VERSION",
     "AI_DECISION_SCHEMA_ID", "AI_DECISION_SCHEMA_VERSION",

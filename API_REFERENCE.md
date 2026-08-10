@@ -1,8 +1,8 @@
-# AURORA Agent Evidence SDK v0.2 — API Reference
+# AURORA Agent Evidence SDK v0.7 — API Reference
 
 Package: `aurora-agent`
 Import: `aurora_agent`
-Version: `0.3.1`
+Version: `0.7.0`
 Python: `>=3.11,<3.14`
 
 ## Public construction surface
@@ -369,3 +369,108 @@ operator-declared context and do not establish correctness, fairness, legality,
 policy applicability, or external-world truth.
 
 See `AI_DECISION_QUICKSTART.md`.
+
+---
+
+# v0.7 Human Approval API
+
+## `HumanApprovalClient(...)`
+
+```python
+HumanApprovalClient(
+    base_url: str,
+    api_key: str,
+    reviewer_token: str | None = None,
+    timeout: float = 20.0,
+)
+```
+
+The API key identifies/scopes the AURORA organization. `reviewer_token` is a
+Supabase access token for the human principal and is required only for reviewer
+eligibility and Human Review writes. The SDK sends it as
+`X-Reviewer-Authorization: Bearer ...`; it is not persisted to the local
+outbox.
+
+### Requirement helpers
+
+`build_approval_requirement(...)` produces the exact Human Approval v1
+requirement shape. `required_reviewer_roles` must be unique and
+lexicographically ascending.
+
+`build_policy_requirement_binding(...)` produces a request that binds one
+exact `(policy_id, policy_version, policy_digest)` identity to one exact v1
+requirement snapshot. It does not merge or weaken requirements.
+
+### Policy and gate reads
+
+```python
+client.list_policy_requirements()
+client.register_policy_requirement(request, idempotency_key=...)
+client.gate(
+    record_id,
+    approval_process_id=None,
+    policy_source_decision_record_id=None,
+)
+client.list_reviews(record_id)
+```
+
+Policy-requirement registration is a human-bound operation and requires a
+reviewer token.
+
+### Process and eligibility
+
+```python
+client.process(
+    record_id,
+    approval_process_id,
+    policy_source_decision_record_id=None,
+)
+client.eligibility(
+    record_id,
+    approval_process_id,
+    policy_source_decision_record_id=None,
+    reviewer_token=None,
+)
+```
+
+`process()` is a server-derived projection. `eligibility()` additionally binds
+the authenticated reviewer and can return an exact `approval_submission`. Do
+not predict the next event sequence or declared resulting state client-side.
+
+### Review writes
+
+```python
+client.review(record_id, request, ...)
+client.approve(record_id, request, ...)
+client.reject(record_id, request, ...)
+client.override(record_id, request, ...)
+client.escalate(record_id, request, ...)
+client.defer(record_id, request, ...)
+```
+
+All writes require a reviewer token and are revalidated by AURORA before
+signing, RFC 3161 timestamping, and immutable persistence.
+
+### `approve_from_eligibility(...)`
+
+```python
+client.approve_from_eligibility(
+    record_id,
+    eligibility,
+    reason_code="policy_requirement_met",
+    reason="Reviewed the evidence and requirement.",
+    execution_authorization_granted=False,
+    idempotency_key="approval-...",
+)
+```
+
+This helper requires `eligible_to_count=true` and reuses the server-returned
+`approval_submission` unchanged. It adds the review reason,
+`policy_acknowledged=true`, and the caller's explicit execution-authorization
+choice. It never sends `decision_responsibility_accepted`; that field is
+created by the server for an approved event.
+
+The public state vocabulary includes `second_reviewer_required` and
+`multi_party_approved`. Human Approval does not establish decision correctness,
+legal authority, policy validity, fairness, compliance, or external-world
+truth.
