@@ -24,12 +24,16 @@ def test_apache_2_license_metadata_and_files_are_present() -> None:
 
 
 def test_public_distribution_approval_record_matches_release() -> None:
+    pyproject = tomllib.loads((PACKAGE_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = pyproject["project"]["version"]
+
     approval = (PACKAGE_ROOT / "DISTRIBUTION_APPROVAL.txt").read_text(
         encoding="utf-8"
     )
 
     assert "AURORA-AGENT PUBLIC DISTRIBUTION APPROVAL RECORD" in approval
-    assert "Approved version: 0.3.1" in approval
+    assert f"Approved version: {version}" in approval
+    assert f"Approved release tag: v{version}" in approval
     assert "SPDX: Apache-2.0" in approval
     assert "AURORA backend" in approval
     assert "JAKROW repository content and components not included" in approval
