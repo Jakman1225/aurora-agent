@@ -1,8 +1,8 @@
-# AURORA Agent Evidence SDK v0.7 — API Reference
+# AURORA Agent Evidence SDK v0.8 — API Reference
 
 Package: `aurora-agent`
 Import: `aurora_agent`
-Version: `0.7.0`
+Version: `0.8.0`
 Python: `>=3.11,<3.14`
 
 ## Public construction surface
@@ -474,3 +474,72 @@ The public state vocabulary includes `second_reviewer_required` and
 `multi_party_approved`. Human Approval does not establish decision correctness,
 legal authority, policy validity, fairness, compliance, or external-world
 truth.
+
+---
+
+# v0.8 Amendment / Correction API
+
+## `AmendmentClient(...)`
+
+```python
+AmendmentClient(
+    base_url="https://aurora-mvp-production.up.railway.app",
+    api_key="<AURORA_API_KEY>",
+)
+```
+
+The API key remains in memory only. Stage E writes are server-authoritative and
+idempotent.
+
+### `lifecycle(record_id) -> dict`
+
+Reads the immutable-chain-derived lifecycle projection for an AI Output or AI
+Decision record. `viewed_record.lifecycle_role` is independent from the record's
+cryptographic verification status.
+
+### `prepare_ai_output_successor(...)`
+
+Prepares a complete AI Output v3 successor in `PENDING_SUCCESSOR` state.
+
+### `prepare_ai_decision_successor(...)`
+
+Prepares a complete AI Decision v3 successor in `PENDING_SUCCESSOR` state.
+
+The SDK does not patch the predecessor or copy fields implicitly. Seal the
+prepared successor through the existing AI Output / AI Decision client before
+activation.
+
+### `build_amendment_request_from_lifecycle(...)`
+
+Consumes the exact `expected_head` returned by AURORA and builds a coordinated
+Amendment v1 request. It never predicts chain sequence or current head locally.
+
+Supported amendment types:
+
+- `amendment`
+- `correction`
+- `supersession`
+- `reversal`
+- `withdrawal`
+
+`amendment`, `correction`, and `supersession` require a successor. `withdrawal`
+forbids one. `reversal` may be terminal.
+
+### `seal_amendment(request, ...) -> dict`
+
+Seals and activates one Amendment v1 lifecycle event. A stale expected head
+returns HTTP 409 `AMENDMENT_CHAIN_HEAD_CONFLICT`.
+
+### `get_amendment(record_id) -> dict`
+
+Reads one immutable Amendment record.
+
+### `download_lifecycle_bundle(record_id, destination) -> Path`
+
+Downloads `AuroraSeal_Lifecycle_Verification_Bundle / 1.0`. The bundle is
+designed for independent chain replay and is distinct from local action bundles
+and standard record Evidence Bundles.
+
+Human Approval and other digest-bound relationships are not inherited by a
+successor. A valid Amendment chain establishes integrity and recorded lifecycle
+currentness, not substantive correctness or legal/compliance status.

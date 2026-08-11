@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.7 with action, ingestion, AI Output, AI Decision, and Human Approval surfaces."""
+"""AURORA Agent Evidence SDK v0.8 with action, decision, approval, and Amendment lifecycle surfaces."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -53,6 +53,18 @@ from .human_approval import (
     build_approval_requirement,
     build_policy_requirement_binding,
 )
+from .amendments import (
+    AMENDMENT_PROFILE_ID,
+    AMENDMENT_PROFILE_VERSION,
+    AMENDMENT_TYPES,
+    LIFECYCLE_EFFECTS,
+    LIFECYCLE_ROLES,
+    AmendmentAPIError,
+    AmendmentClient,
+    AmendmentTransportError,
+    build_amendment_request,
+    build_amendment_request_from_lifecycle,
+)
 from .ai_outputs import (
     AI_OUTPUT_CAPTURE_MODES,
     AI_OUTPUT_FORMATS,
@@ -66,7 +78,7 @@ from .ai_outputs import (
     content_digest,
 )
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",
@@ -87,6 +99,10 @@ __all__ = [
     "HUMAN_APPROVAL_PROFILE_VERSION", "HUMAN_APPROVAL_REVIEW_LEVELS",
     "HumanApprovalAPIError", "HumanApprovalClient", "HumanApprovalTransportError",
     "build_approval_requirement", "build_policy_requirement_binding",
+    "AMENDMENT_PROFILE_ID", "AMENDMENT_PROFILE_VERSION", "AMENDMENT_TYPES",
+    "LIFECYCLE_EFFECTS", "LIFECYCLE_ROLES", "AmendmentAPIError",
+    "AmendmentClient", "AmendmentTransportError", "build_amendment_request",
+    "build_amendment_request_from_lifecycle",
     "AI_DECISION_CAPTURE_MODES", "AI_DECISION_EVIDENCE_COMPLETENESS",
     "AI_DECISION_PROFILE_ID", "AI_DECISION_PROFILE_VERSION",
     "AI_DECISION_SCHEMA_ID", "AI_DECISION_SCHEMA_VERSION",
