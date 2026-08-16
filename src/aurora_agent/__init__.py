@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.8 with a Stage F release candidate surface."""
+"""AURORA Agent Evidence SDK v0.9 with the Stage F Data Lifecycle surface."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -86,7 +86,7 @@ from .data_lifecycle import (
     DataLifecycleTransportError,
 )
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 __all__ = [
     "Action", "Aurora", "Authorization", "AuroraAgentError", "Boundary",

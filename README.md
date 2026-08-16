@@ -11,25 +11,26 @@ to [AURORA](https://auroraseal.com).
 pip install aurora-agent
 ```
 
-It provides six compatible surfaces:
+It provides seven compatible surfaces:
 
-1. **Local action evidence** — proposal, authorization/policy, precommit,
+1. **Local action evidence** ??proposal, authorization/policy, precommit,
    execution, outcome, deterministic bundle export, and offline verification.
-2. **AURORA ingestion** — incremental runtime events, a durable SQLite outbox,
+2. **AURORA ingestion** ??incremental runtime events, a durable SQLite outbox,
    idempotent transport, and finalization into an immutable AURORA
    Compositional Evidence graph.
-3. **AI Output evidence** — first-class AuroraSeal v3 records with digest-only,
+3. **AI Output evidence** ??first-class AuroraSeal v3 records with digest-only,
    redacted, or full-payload capture, sealing, verification, bundle export, and
    signed links to sealed AI decision records.
-4. **AI Decision evidence** — first-class decision records that preserve
+4. **AI Decision evidence** ??first-class decision records that preserve
    operator-declared score interpretation, policy context, evidence gaps,
    uncertainty, sealing, public metadata verification, and offline bundles.
-5. **Human Approval evidence** — policy-bound approval requirements, immutable
+5. **Human Approval evidence** ??policy-bound approval requirements, immutable
    review events, reviewer eligibility, deterministic single- and multi-party
    process projections, and human-bound approval operations.
-6. **Amendment lifecycle evidence** — immutable corrections, amendments,
+6. **Amendment lifecycle evidence** ??immutable corrections, amendments,
    supersessions, reversals, and withdrawals with full-successor preparation,
    current-head coordination, lifecycle projection, and verification bundles.
+7. **Data Lifecycle evidence** — retention, redaction, disclosure, tombstone, content-artifact, operation-intent, projection, and independently verifiable lifecycle-bundle surfaces.
 
 ## Core properties
 
@@ -75,7 +76,7 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.8.0` |
+| version | `0.9.0` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
@@ -90,7 +91,8 @@ aurora-agent outbox flush --outbox PATH
 - [`API_REFERENCE.md`](API_REFERENCE.md)
 - [`THREAT_MODEL.md`](THREAT_MODEL.md)
 - [`NON_CLAIMS.txt`](NON_CLAIMS.txt)
-- [`RELEASE_NOTES_0.8.0.md`](RELEASE_NOTES_0.8.0.md)
+- [RELEASE_NOTES_0.9.0.md](RELEASE_NOTES_0.9.0.md)
+- [RELEASE_NOTES_0.8.0.md](RELEASE_NOTES_0.8.0.md)
 - [`RELEASE_NOTES_0.7.0.md`](RELEASE_NOTES_0.7.0.md)
 - [`RELEASE_NOTES_0.6.0.md`](RELEASE_NOTES_0.6.0.md)
 - [`RELEASE_NOTES_0.5.0.md`](RELEASE_NOTES_0.5.0.md)
@@ -103,8 +105,8 @@ aurora-agent outbox flush --outbox PATH
 AURORA publishes two OpenSSL-only RFC 3161 verification exercises. They require
 no AURORA SDK, API key, backend access, or custom verifier.
 
-- [CH-01 — Independently verify the timestamp token](./challenges/ch-01-independent-rfc3161-verification/)
-- [CH-02 — Change one bit and reproduce verification failure](./challenges/ch-02-one-bit-tamper-detection/)
+- [CH-01 ??Independently verify the timestamp token](./challenges/ch-01-independent-rfc3161-verification/)
+- [CH-02 ??Change one bit and reproduce verification failure](./challenges/ch-02-one-bit-tamper-detection/)
 
 These challenges demonstrate cryptographic binding and tamper detection for the
 supplied bytes.
