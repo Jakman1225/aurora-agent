@@ -1,4 +1,4 @@
-"""AURORA Agent Evidence SDK v0.8 with action, decision, approval, and Amendment lifecycle surfaces."""
+"""AURORA Agent Evidence SDK v0.8 with a Stage F release candidate surface."""
 
 from .boundary import Boundary, FieldRule
 from .canonical import (
@@ -77,6 +77,14 @@ from .ai_outputs import (
     AIOutputTransportError,
     content_digest,
 )
+from .data_lifecycle import (
+    DATA_LIFECYCLE_PROFILE_ID,
+    DATA_LIFECYCLE_PROFILE_VERSION,
+    DATA_LIFECYCLE_RECORD_TYPES,
+    DataLifecycleAPIError,
+    DataLifecycleClient,
+    DataLifecycleTransportError,
+)
 
 __version__ = "0.8.0"
 
@@ -112,4 +120,7 @@ __all__ = [
     "build_ai_decision_request", "build_evidence_assessment",
     "build_evidence_flag", "build_policy_context",
     "build_score_interpretation", "canonical_decimal",
+    "DATA_LIFECYCLE_PROFILE_ID", "DATA_LIFECYCLE_PROFILE_VERSION",
+    "DATA_LIFECYCLE_RECORD_TYPES", "DataLifecycleAPIError",
+    "DataLifecycleClient", "DataLifecycleTransportError",
 ]
