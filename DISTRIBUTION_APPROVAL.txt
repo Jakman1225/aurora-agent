@@ -7,8 +7,8 @@ services or proprietary JAKROW components.
 
 Approval date: 2026-08-17
 Package: aurora-agent
-Approved version: 0.9.1
-Approved release tag: v0.9.1
+Approved version: 0.9.2
+Approved release tag: v0.9.2
 License: Apache License, Version 2.0 (SPDX: Apache-2.0)
 
 Approved scope:
@@ -26,7 +26,7 @@ Explicitly excluded from this approval and license scope:
 - AURORA and JAKROW trademarks, names, logos, and branding.
 
 Release conditions:
-1. The release tag must be v0.9.1 and must match the version resolved from
+1. The release tag must be v0.9.2 and must match the version resolved from
    src/aurora_agent/_version.py through pyproject.toml dynamic metadata.
 2. The complete test suite must pass on supported Python versions.
 3. Wheel and source distributions must pass build and metadata validation.
@@ -34,7 +34,7 @@ Release conditions:
    GitHub Actions workflows and protected environments (`testpypi` and `pypi`).
 5. Release artifacts must include SHA-256 checksums, a CycloneDX SBOM, and
    GitHub-native build provenance attestations.
-6. Production publication must run from the approved v0.9.1 tag and the
+6. Production publication must run from the approved v0.9.2 tag and the
    production publish workflow must be explicitly confirmed at dispatch time.
 7. The public quickstart must be validated using a clean installation from the
    public package index after publication.

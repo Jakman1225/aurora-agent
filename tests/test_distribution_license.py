@@ -15,6 +15,8 @@ def test_apache_2_license_metadata_and_files_are_present() -> None:
 
     assert project["license"] == "Apache-2.0"
     assert project["license-files"] == ["LICENSE", "NOTICE"]
+    assert "Development Status :: 4 - Beta" in project["classifiers"]
+    assert "Development Status :: 3 - Alpha" not in project["classifiers"]
 
     license_text = (PACKAGE_ROOT / "LICENSE").read_text(encoding="utf-8")
     notice_text = (PACKAGE_ROOT / "NOTICE").read_text(encoding="utf-8")

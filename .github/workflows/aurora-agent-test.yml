@@ -3,6 +3,8 @@ name: SDK tests
 on:
   push:
     paths:
+      - ".editorconfig"
+      - "README.md"
       - "src/**"
       - "tests/**"
       - "examples/**"
@@ -13,6 +15,8 @@ on:
       - ".github/workflows/aurora-agent-test.yml"
   pull_request:
     paths:
+      - ".editorconfig"
+      - "README.md"
       - "src/**"
       - "tests/**"
       - "examples/**"
