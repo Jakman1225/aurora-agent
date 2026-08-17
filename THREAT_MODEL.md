@@ -1,4 +1,4 @@
-# AURORA Agent Evidence SDK v0.1 — Threat Model
+# AURORA Agent Evidence Bundle v0.1 — Threat Model
 
 ## Protected properties
 

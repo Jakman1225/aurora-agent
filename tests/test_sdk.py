@@ -20,6 +20,7 @@ from aurora_agent import (
     canonical_bytes,
     commitment,
     verify_bundle,
+    __version__,
 )
 
 
@@ -214,6 +215,55 @@ def test_export_is_deterministic(tmp_path: Path):
     _, action, first = completed_action(tmp_path)
     second = action.export(tmp_path / "action2.zip")
     assert first.read_bytes() == second.read_bytes()
+
+
+def test_bundle_records_package_producer_version(tmp_path: Path):
+    _, _, bundle = completed_action(tmp_path)
+    with zipfile.ZipFile(bundle) as archive:
+        manifest = json.loads(archive.read("manifest.json"))
+
+    assert manifest["schema_version"] == "aurora.agent-sdk-evidence-bundle.v0.1"
+    assert manifest["sdk_version"] == __version__
+
+
+def test_verifier_accepts_legacy_and_current_producer_versions(tmp_path: Path):
+    _, _, bundle = completed_action(tmp_path)
+
+    for producer_version in ("0.1.0", __version__):
+        candidate = tmp_path / f"producer-{producer_version}.zip"
+
+        def mutate(work: Path, version=producer_version) -> None:
+            manifest_path = work / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["sdk_version"] = version
+            manifest_path.write_bytes(canonical_bytes(manifest))
+
+        rewrite_zip(bundle, candidate, mutate)
+        assert verify_bundle(candidate).verdict is Verdict.VALID
+
+
+def test_verifier_rejects_malformed_producer_version(tmp_path: Path):
+    _, _, bundle = completed_action(tmp_path)
+    malformed = tmp_path / "producer-malformed.zip"
+
+    def mutate(work: Path) -> None:
+        manifest_path = work / "manifest.json"
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest["sdk_version"] = "not a package version"
+        manifest_path.write_bytes(canonical_bytes(manifest))
+
+    rewrite_zip(bundle, malformed, mutate)
+    report = verify_bundle(malformed)
+    assert report.verdict is Verdict.INVALID
+    assert "invalid SDK producer version" in report.errors
+
+
+def test_report_records_package_verifier_version(tmp_path: Path):
+    sdk, _, bundle = completed_action(tmp_path)
+    report = sdk.verify(bundle).to_dict()
+
+    assert report["report_schema"] == "aurora.agent-sdk-verification-report.v0.1"
+    assert report["verifier"] == {"name": "aurora-agent", "version": __version__}
 
 
 def test_supplied_argument_tamper_is_invalid(tmp_path: Path):

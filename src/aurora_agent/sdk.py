@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Optional
 
+from ._version import __version__
 from .boundary import Boundary
 from .canonical import CANONICALIZATION_PROFILE, CANONICALIZATION_VERSION, HASH_ALGORITHM, canonical_bytes, commitment, digest_bytes
 from .exceptions import LifecycleError
@@ -18,7 +19,7 @@ from .verifier import verify_bundle
 
 _BUNDLE_SCHEMA = "aurora.agent-sdk-evidence-bundle.v0.1"
 _NON_CLAIMS = (
-    "AURORA AGENT EVIDENCE SDK v0.1 NON-CLAIMS\n"
+    "AURORA AGENT EVIDENCE BUNDLE v0.1 NON-CLAIMS\n"
     "- VALID does not prove capture completeness or absence of bypass paths.\n"
     "- VALID does not prove external anchoring.\n"
     "- VALID does not prove certificate-path trust.\n"
@@ -282,7 +283,7 @@ class Action:
         claims_bytes = _NON_CLAIMS.encode("utf-8")
         manifest = {
             "schema_version": _BUNDLE_SCHEMA,
-            "sdk_version": "0.1.0",
+            "sdk_version": __version__,
             "action_id": record["action_id"],
             "proposal_digest": record["proposal_digest"],
             "canonicalization_profile": CANONICALIZATION_PROFILE,

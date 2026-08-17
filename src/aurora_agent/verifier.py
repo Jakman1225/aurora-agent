@@ -19,6 +19,11 @@ _REQUIRED = frozenset({"manifest.json", "action.json", "events.json", "NON_CLAIM
 _MAX_ENTRY = 8 * 1024 * 1024
 _MAX_TOTAL = 32 * 1024 * 1024
 _SHA256_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+_PRODUCER_VERSION_RE = re.compile(
+    r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)"
+    r"(?:(?:a|b|rc)[0-9]+)?(?:\.post[0-9]+)?(?:\.dev[0-9]+)?"
+    r"(?:\+[a-zA-Z0-9]+(?:[.-][a-zA-Z0-9]+)*)?$"
+)
 
 
 def _check(status: str, name: str, detail: str) -> dict[str, str]:
@@ -108,8 +113,11 @@ def verify_bundle(
 
     if not isinstance(manifest, dict) or manifest.get("schema_version") != _BUNDLE_SCHEMA:
         return _report(Verdict.UNSUPPORTED, errors=["unsupported bundle schema"])
-    if manifest.get("sdk_version") != "0.1.0":
-        return _report(Verdict.UNSUPPORTED, errors=["unsupported SDK bundle version"])
+    producer_version = manifest.get("sdk_version")
+    if not isinstance(producer_version, str) or not _PRODUCER_VERSION_RE.fullmatch(
+        producer_version
+    ):
+        return _report(Verdict.INVALID, errors=["invalid SDK producer version"])
     if manifest.get("canonicalization_profile") != "aurora-agent-action-json" or manifest.get("canonicalization_version") != "0.1":
         return _report(Verdict.UNSUPPORTED, errors=["unsupported canonicalization profile"])
     if manifest.get("hash_algorithm") != "sha256":

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional
 
+from ._version import __version__
+
 
 class Phase(str, Enum):
     PROPOSED = "PROPOSED"
@@ -64,7 +66,7 @@ class VerificationReport:
     def to_dict(self) -> dict[str, Any]:
         return {
             "report_schema": "aurora.agent-sdk-verification-report.v0.1",
-            "verifier": {"name": "aurora-agent", "version": "0.1.0"},
+            "verifier": {"name": "aurora-agent", "version": __version__},
             "verdict": self.verdict.value,
             "action_id": self.action_id,
             "proposal_digest": self.proposal_digest,
