@@ -8,7 +8,7 @@ consequential machine actions and transmitting compositional execution evidence
 to [AURORA](https://auroraseal.com).
 
 ```bash
-pip install aurora-agent
+python -m pip install --upgrade aurora-agent
 ```
 
 It provides seven compatible surfaces:
@@ -50,7 +50,7 @@ After creating a Sandbox API key at
 `https://auroraseal.com/app/quickstart`:
 
 ```bash
-pip install aurora-agent
+python -m pip install --upgrade aurora-agent
 export AURORA_API_KEY="<shown-once-key>"
 aurora-agent quickstart
 ```
@@ -76,11 +76,12 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.9.2` |
+| version | `0.9.3` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
 
+- [RELEASE_NOTES_0.9.3.md](RELEASE_NOTES_0.9.3.md)
 - [RELEASE_NOTES_0.9.2.md](RELEASE_NOTES_0.9.2.md)
 - [`AMENDMENT_QUICKSTART.md`](AMENDMENT_QUICKSTART.md)
 - [`HUMAN_APPROVAL_QUICKSTART.md`](HUMAN_APPROVAL_QUICKSTART.md)

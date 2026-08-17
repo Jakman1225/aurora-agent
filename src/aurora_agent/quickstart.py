@@ -8,13 +8,14 @@ from pathlib import Path
 from typing import Any, Callable, Optional
 from urllib.parse import quote
 
+from ._version import __version__
 from .ingestion import IngestionClient
 from .ingestion_constants import CAPTURE_DIGEST_ONLY, STATE_ACKNOWLEDGED
 from .ingestion_http import IngestionTransportError, UrllibTransport
 
 DEFAULT_API_BASE_URL = "https://aurora-mvp-production.up.railway.app"
 DEFAULT_FRONTEND_URL = "https://auroraseal.com"
-QUICKSTART_RELEASE_ID = "aurora-agent-0.3.1"
+QUICKSTART_RELEASE_ID = f"aurora-agent-{__version__}"
 
 
 class QuickstartError(RuntimeError):
@@ -187,7 +188,9 @@ class QuickstartRunner:
                 method="POST",
                 endpoint="/v1/audit-records",
                 body=body,
-                idempotency_key=None,
+                idempotency_key=(
+                    f"aurora-agent.quickstart.audit-record:{operation_ref}"
+                ),
             )
         except IngestionTransportError as exc:
             raise QuickstartError(f"Could not create the sample record: {exc}") from exc

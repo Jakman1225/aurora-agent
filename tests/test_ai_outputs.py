@@ -124,6 +124,20 @@ def test_get_seal_and_verify_use_expected_endpoints():
     ]
 
 
+def test_standard_seal_uses_batch_endpoint_and_replay_key():
+    transport = FakeTransport(
+        [_json_response(200, {"temporal_mode": "standard_batch", "batch_id": "batch_1"})]
+    )
+    client = AIOutputClient(base_url="https://example.test", api_key="ak", transport=transport)
+
+    result = client.seal_standard("ase_1")
+
+    assert result["batch_id"] == "batch_1"
+    call = transport.calls[0]
+    assert call["endpoint"] == "/v1/ai-outputs/ase_1/seal-standard"
+    assert call["idempotency_key"].startswith("auroraseal.ai-output.seal-standard:")
+
+
 def test_api_error_preserves_structured_error():
     transport = FakeTransport(
         [

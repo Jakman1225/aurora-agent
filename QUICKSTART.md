@@ -4,7 +4,7 @@
 
 ```powershell
 py -3.13 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install aurora-agent
+.\.venv\Scripts\python.exe -m pip install --upgrade aurora-agent
 ```
 
 Python 3.11, 3.12, and 3.13 are supported.

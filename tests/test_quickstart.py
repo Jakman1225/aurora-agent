@@ -69,6 +69,18 @@ def test_quickstart_creates_valid_graph_without_persisting_api_key(tmp_path: Pat
         "tool_outcome",
         "final_decision",
     ]
+    audit_create = next(
+        call for call in transport.calls if call[1] == "/v1/audit-records"
+    )
+    assert audit_create[3] == (
+        "aurora-agent.quickstart.audit-record:op_quickstart_test"
+    )
+    run_create = next(
+        call
+        for call in transport.calls
+        if call[0] == "POST" and call[1] == "/v1/evidence/runs"
+    )
+    assert json.loads(run_create[2])["release_id"] == "aurora-agent-0.9.3"
     workspace_bytes = b"".join(path.read_bytes() for path in tmp_path.rglob("*") if path.is_file())
     assert b"ak_live_secret_must_not_persist" not in workspace_bytes
 

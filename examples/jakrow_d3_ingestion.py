@@ -2,7 +2,7 @@
 
 This example requires both private packages to be installed:
 
-    pip install aurora-agent
+    python -m pip install --upgrade aurora-agent
     pip install -e ../
 
 It never accepts an API key on the command line. Use ``AURORA_API_KEY``.

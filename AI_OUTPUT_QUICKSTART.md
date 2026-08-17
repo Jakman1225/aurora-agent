@@ -1,6 +1,6 @@
 # AuroraSeal AI Output v3 Quickstart
 
-Requires `aurora-agent>=0.5.0` and an AURORA API key with read/write scope.
+Requires `aurora-agent` and an AURORA API key with read/write scope.
 
 ```python
 from aurora_agent import AIOutputClient
@@ -43,6 +43,11 @@ link_id = relationship["subject"]["link_id"]
 print(client.verify_relationship(link_id)["status"])
 print(client.list_linked_decisions(record_id))
 ```
+
+`seal(...)` requests immediate signature and timestamp evidence. To admit a
+DIGESTED record to Standard batch anchoring instead, call
+`client.seal_standard(record_id)`. Both writes accept an optional stable
+`idempotency_key` for safe request replay.
 
 ## Capture modes
 

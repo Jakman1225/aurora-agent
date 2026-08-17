@@ -320,6 +320,7 @@ Methods:
 - `create_full_payload(...)`
 - `get(record_id)`
 - `seal(record_id, idempotency_key=None)`
+- `seal_standard(record_id, idempotency_key=None)`
 - `verify(record_id)`
 - `download_bundle(record_id, destination)`
 - `link_decision(ai_output_record_id, decision_record_id, idempotency_key=None)`
@@ -351,6 +352,7 @@ Methods:
 - `create(request, idempotency_key=None)`
 - `get(record_id)`
 - `seal(record_id, idempotency_key=None)`
+- `seal_standard(record_id, idempotency_key=None)`
 - `verify(record_id)`
 - `download_bundle(record_id, destination)`
 

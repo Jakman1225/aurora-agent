@@ -235,6 +235,20 @@ def test_create_list_get_seal_verify_use_expected_endpoints():
     assert json.loads(transport.calls[0]["body"].decode("utf-8"))["score_interpretation"]["score_value"] == "0.82"
 
 
+def test_standard_seal_uses_batch_endpoint_and_replay_key():
+    transport = FakeTransport(
+        [_json_response(200, {"temporal_mode": "standard_batch", "batch_id": "batch_1"})]
+    )
+    client = AIDecisionClient(base_url="https://example.test", api_key="ak", transport=transport)
+
+    result = client.seal_standard("asd_1")
+
+    assert result["batch_id"] == "batch_1"
+    call = transport.calls[0]
+    assert call["endpoint"] == "/v1/ai-decisions/asd_1/seal-standard"
+    assert call["idempotency_key"].startswith("auroraseal.ai-decision.seal-standard:")
+
+
 def test_api_error_preserves_structured_error():
     transport = FakeTransport(
         [

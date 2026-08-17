@@ -70,6 +70,11 @@ client.download_bundle(record_id, ".")
 print(verification["status"])
 ```
 
+`seal(...)` requests immediate signature and timestamp evidence. To admit a
+DIGESTED decision to Standard batch anchoring instead, call
+`client.seal_standard(record_id)`. Both writes accept an optional stable
+`idempotency_key` for safe request replay.
+
 All numeric score values are canonical decimal strings. Python floats are
 rejected before transmission. The client records operator-declared score,
 policy, outcome, and evidence context; it does not establish correctness,

@@ -366,6 +366,20 @@ class AIOutputClient:
             idempotency_key=idempotency_key or _idempotency_key("seal"),
         )
 
+    def seal_standard(
+        self,
+        record_id: str,
+        *,
+        idempotency_key: Optional[str] = None,
+    ) -> dict[str, Any]:
+        """Admit a DIGESTED AI Output to Standard batch anchoring."""
+
+        return self._json_request(
+            method="POST",
+            endpoint=f"/v1/ai-outputs/{record_id}/seal-standard",
+            idempotency_key=idempotency_key or _idempotency_key("seal-standard"),
+        )
+
     def verify(self, record_id: str) -> dict[str, Any]:
         return self._json_request(
             method="POST",

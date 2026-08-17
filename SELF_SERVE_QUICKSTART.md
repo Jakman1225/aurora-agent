@@ -16,7 +16,7 @@ path without operator assistance.
 PowerShell:
 
 ```powershell
-python -m pip install aurora-agent
+python -m pip install --upgrade aurora-agent
 $env:AURORA_API_KEY = "<shown-once-key>"
 aurora-agent quickstart
 ```
@@ -24,7 +24,7 @@ aurora-agent quickstart
 Bash/zsh:
 
 ```bash
-python -m pip install aurora-agent
+python -m pip install --upgrade aurora-agent
 export AURORA_API_KEY="<shown-once-key>"
 aurora-agent quickstart
 ```
