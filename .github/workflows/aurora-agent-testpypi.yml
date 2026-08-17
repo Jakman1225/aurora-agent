@@ -30,6 +30,7 @@ jobs:
       - name: Verify package identity and license
         run: |
           python - <<'PY'
+          import runpy
           import tomllib
           from pathlib import Path
 
@@ -37,7 +38,8 @@ jobs:
           assert project["name"] == "aurora-agent"
           assert project["license"] == "Apache-2.0"
           assert project["license-files"] == ["LICENSE", "NOTICE"]
-          assert project["version"]
+          assert project["dynamic"] == ["version"]
+          assert runpy.run_path("src/aurora_agent/_version.py")["__version__"]
           PY
 
       - name: Build distributions

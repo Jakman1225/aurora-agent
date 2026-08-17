@@ -27,18 +27,26 @@ jobs:
         run: |
           python - <<'PY'
           import os
+          import runpy
           import tomllib
           from pathlib import Path
 
-          project = tomllib.loads(
+          configuration = tomllib.loads(
               Path("pyproject.toml").read_text(encoding="utf-8")
-          )["project"]
+          )
+          project = configuration["project"]
 
           assert project["name"] == "aurora-agent", project["name"]
           assert project["license"] == "Apache-2.0", project["license"]
           assert project["license-files"] == ["LICENSE", "NOTICE"], project["license-files"]
 
-          version = project["version"]
+          assert project["dynamic"] == ["version"], project["dynamic"]
+          version_source = configuration["tool"]["setuptools"]["dynamic"]["version"]
+          assert version_source == {
+              "attr": "aurora_agent._version.__version__"
+          }, version_source
+
+          version = runpy.run_path("src/aurora_agent/_version.py")["__version__"]
           expected_tag = f"v{version}"
           actual_ref = os.environ["GITHUB_REF"]
           expected_ref = f"refs/tags/{expected_tag}"
@@ -47,6 +55,12 @@ jobs:
               raise SystemExit(
                   f"Run this workflow from tag {expected_tag}; current ref is {actual_ref}"
               )
+
+          approval = Path("DISTRIBUTION_APPROVAL.txt").read_text(encoding="utf-8")
+          if f"Approved version: {version}" not in approval:
+              raise SystemExit(f"Distribution approval does not cover version {version}")
+          if f"Approved release tag: {expected_tag}" not in approval:
+              raise SystemExit(f"Distribution approval does not cover tag {expected_tag}")
 
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
               output.write(f"version={version}\n")

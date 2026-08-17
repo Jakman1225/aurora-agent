@@ -42,3 +42,15 @@ def test_public_distribution_approval_record_matches_release() -> None:
     assert "SPDX: Apache-2.0" in approval
     assert "AURORA backend" in approval
     assert "JAKROW repository content and components not included" in approval
+
+
+def test_release_workflows_resolve_the_dynamic_version_source() -> None:
+    workflows = [
+        PACKAGE_ROOT / ".github" / "workflows" / "aurora-agent-publish.yml",
+        PACKAGE_ROOT / ".github" / "workflows" / "aurora-agent-testpypi.yml",
+    ]
+
+    for workflow in workflows:
+        source = workflow.read_text(encoding="utf-8")
+        assert 'runpy.run_path("src/aurora_agent/_version.py")' in source
+        assert 'project["version"]' not in source

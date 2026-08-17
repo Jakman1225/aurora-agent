@@ -1,15 +1,15 @@
 {
-  "base_head": "4f47c3254dcbce2d5f02bea3e4448a5d44e8ac21",
+  "base_head": "424e137a3ce3face2ecb64e1da2807539bfcc79f",
   "canonical_content": "Git index blob bytes after repository clean/eol filters",
   "digest_algorithm": "SHA-256",
   "excluded_outputs": [
     "CURRENT_RELEASE_MANIFEST.json",
     "SOURCE_SHA256SUMS.txt"
   ],
-  "file_count": 89,
-  "generated_at_utc": "2026-08-17T09:29:38+00:00",
+  "file_count": 90,
+  "generated_at_utc": "2026-08-17T09:37:45+00:00",
   "schema": "aurora.current-release-manifest.v1",
   "snapshot_basis": "git_index",
   "source_sums_file": "SOURCE_SHA256SUMS.txt",
-  "source_sums_sha256": "ac3dd3cd58a6670ef39f5678a8a9ff39f0445d60570740132b4bc69111c2899b"
+  "source_sums_sha256": "86570fef6b8200a2fe49cb17a76f0bba1935cdbe96828295b9073c6442f39dc3"
 }

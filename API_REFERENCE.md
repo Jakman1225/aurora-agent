@@ -1,8 +1,8 @@
-# AURORA Agent Evidence SDK v0.8 — API Reference
+# AURORA Agent Evidence SDK v0.9.1 — API Reference
 
 Package: `aurora-agent`
 Import: `aurora_agent`
-Version: `0.8.0`
+Version: `0.9.1`
 Python: `>=3.11,<3.14`
 
 ## Public construction surface
