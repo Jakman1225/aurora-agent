@@ -1,0 +1,3852 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aurora:stage-g:contract:1.0.0",
+  "title": "AURORA Stage G Contract Candidate 1.1",
+  "description": "Candidate only. Structural validation does not establish signature, linkage, temporal or operational validity. Normative semantic rules are in docs/.",
+  "$defs": {
+    "Reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contract_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "digest_kind": {
+          "type": "string",
+          "enum": [
+            "G_TYPED",
+            "LEGACY_SUBJECT",
+            "RAW_BYTES"
+          ]
+        }
+      },
+      "required": [
+        "contract_id",
+        "artifact_id",
+        "digest",
+        "digest_kind"
+      ]
+    },
+    "Head": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "record": {
+          "$ref": "#/$defs/Reference"
+        },
+        "lineage_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        }
+      },
+      "required": [
+        "record",
+        "lineage_id"
+      ]
+    },
+    "Target": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "account_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "TEST",
+            "PRODUCTION"
+          ]
+        },
+        "resource_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "provider_id",
+        "account_ref",
+        "environment",
+        "resource_id",
+        "operation",
+        "revision"
+      ]
+    },
+    "Adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "adapter_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "adapter_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "artifact_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "request_mapping_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "adapter_id",
+        "adapter_version",
+        "artifact_digest",
+        "request_mapping_digest"
+      ]
+    },
+    "Principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "principal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "agent_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "agent_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "agent_identity_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "delegation_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 16
+        }
+      },
+      "required": [
+        "principal_id",
+        "agent_id",
+        "agent_version",
+        "agent_identity_digest",
+        "delegation_refs"
+      ]
+    },
+    "PayloadCommitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "opening_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "commitment",
+        "media_type",
+        "byte_length"
+      ]
+    },
+    "Intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "run_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "task_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "tool_call_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "principal": {
+          "$ref": "#/$defs/Principal"
+        },
+        "adapter": {
+          "$ref": "#/$defs/Adapter"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "input": {
+          "$ref": "#/$defs/PayloadCommitment"
+        },
+        "credential_scope_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "policy_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "control_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "outcome_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "predicate_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "precondition_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "required_assurance": {
+          "type": "string",
+          "enum": [
+            "SEAL_SIGNED_TSA_PATH_VALID",
+            "SEAL_SIGNED_TSA_QUALIFIED"
+          ]
+        },
+        "valid_until": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "upstream_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "compensates": {
+          "$ref": "#/$defs/Reference"
+        },
+        "unresolved_predecessors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "provider_descriptor_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "action_id",
+        "run_id",
+        "task_id",
+        "tool_call_id",
+        "principal",
+        "adapter",
+        "target",
+        "input",
+        "credential_scope_ref",
+        "policy_ref",
+        "control_profile_ref",
+        "outcome_profile_ref",
+        "predicate_ref",
+        "precondition_ref",
+        "required_assurance",
+        "valid_until",
+        "upstream_refs",
+        "unresolved_predecessors"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "provider_id": {
+                    "const": "aws.s3"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "provider_descriptor_ref"
+            ]
+          }
+        }
+      ]
+    },
+    "ReviewPresentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "display_contract": {
+          "const": "aurora.stage_g.review_display.v1"
+        },
+        "display_payload_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "locale": {
+          "type": "string",
+          "enum": [
+            "ko-KR",
+            "en-US"
+          ]
+        },
+        "required_paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "intent_ref",
+        "display_contract",
+        "display_payload_digest",
+        "locale",
+        "required_paths"
+      ]
+    },
+    "ReviewAcknowledgement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "presentation_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "stage_d_event_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "reviewer_identity_binding_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "review_session_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "acknowledged_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "exact_action_acknowledged": {
+          "const": true
+        }
+      },
+      "required": [
+        "intent_ref",
+        "presentation_ref",
+        "stage_d_event_ref",
+        "reviewer_identity_binding_digest",
+        "review_session_id",
+        "acknowledged_at",
+        "exact_action_acknowledged"
+      ]
+    },
+    "ApprovalBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "decision_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "stage_d_event_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "acknowledgement_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "approval_process_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "requirement_snapshot_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "presentation_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "expected_head": {
+          "$ref": "#/$defs/Head"
+        },
+        "binding_mode": {
+          "const": "PRECOMMITTED_DECISION_REFERENCE"
+        },
+        "required_counted_events_grant_execution": {
+          "const": true
+        }
+      },
+      "required": [
+        "intent_ref",
+        "decision_ref",
+        "stage_d_event_refs",
+        "acknowledgement_refs",
+        "approval_process_id",
+        "requirement_snapshot_digest",
+        "presentation_ref",
+        "expected_head",
+        "binding_mode",
+        "required_counted_events_grant_execution"
+      ]
+    },
+    "Authorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authorization_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "binding_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "policy_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "issuer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "audience_gate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "principal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "logical_execution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "not_before": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "expires_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "max_consumptions": {
+          "const": 1
+        },
+        "provider_request_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "control_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "authorization_id",
+        "intent_ref",
+        "binding_ref",
+        "policy_ref",
+        "issuer_id",
+        "audience_gate_id",
+        "principal_id",
+        "logical_execution_id",
+        "issued_at",
+        "not_before",
+        "expires_at",
+        "max_consumptions",
+        "provider_request_ref",
+        "control_profile_ref"
+      ]
+    },
+    "ProviderRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "logical_execution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "target": {
+          "$ref": "#/$defs/Target"
+        },
+        "adapter": {
+          "$ref": "#/$defs/Adapter"
+        },
+        "wire_request_commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "idempotency_mode": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "PROVIDER_CONTRACT"
+          ]
+        },
+        "key_commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "key_scope_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "retention_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "max_transmissions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "redirect_policy": {
+          "const": "DENY"
+        },
+        "descriptor_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "logical_execution_id",
+        "target",
+        "adapter",
+        "wire_request_commitment",
+        "idempotency_mode",
+        "max_transmissions",
+        "redirect_policy"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "idempotency_mode": {
+                "const": "PROVIDER_CONTRACT"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "key_commitment",
+              "key_scope_ref",
+              "retention_seconds"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "idempotency_mode": {
+                "const": "NONE"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "max_transmissions": {
+                "const": 1
+              }
+            },
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "key_commitment"
+                  ]
+                },
+                {
+                  "required": [
+                    "key_scope_ref"
+                  ]
+                },
+                {
+                  "required": [
+                    "retention_seconds"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "target": {
+                "properties": {
+                  "provider_id": {
+                    "const": "aws.s3"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "descriptor_ref"
+            ]
+          }
+        }
+      ]
+    },
+    "Commitment": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "authorization_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "logical_execution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "provider_request_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "expected_head": {
+          "$ref": "#/$defs/Head"
+        },
+        "required_assurance": {
+          "type": "string",
+          "enum": [
+            "SEAL_SIGNED_TSA_PATH_VALID",
+            "SEAL_SIGNED_TSA_QUALIFIED"
+          ]
+        },
+        "evidence_idempotency_commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "intent_ref",
+        "authorization_ref",
+        "attempt_id",
+        "logical_execution_id",
+        "provider_request_ref",
+        "expected_head",
+        "required_assurance",
+        "evidence_idempotency_commitment"
+      ]
+    },
+    "SealReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commitment_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "stored_event_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "seal_signature_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "timestamp_token_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "timestamp_target_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "assurance_claim": {
+          "type": "string",
+          "enum": [
+            "SEAL_SIGNED_TSA_PATH_VALID",
+            "SEAL_SIGNED_TSA_QUALIFIED"
+          ]
+        },
+        "persisted_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        }
+      },
+      "required": [
+        "commitment_ref",
+        "stored_event_ref",
+        "seal_signature_ref",
+        "timestamp_token_ref",
+        "timestamp_target_digest",
+        "assurance_claim",
+        "persisted_at"
+      ]
+    },
+    "ControlSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authority_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "epoch": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "binding_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "current_head": {
+          "$ref": "#/$defs/Head"
+        },
+        "revocation_sequence": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "authorization_revoked": {
+          "type": "boolean"
+        },
+        "policy_active": {
+          "type": "boolean"
+        },
+        "observed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "valid_until": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "d_process_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "e_head_proof_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "authority_id",
+        "epoch",
+        "intent_ref",
+        "binding_ref",
+        "current_head",
+        "revocation_sequence",
+        "authorization_revoked",
+        "policy_active",
+        "observed_at",
+        "valid_until",
+        "d_process_refs",
+        "e_head_proof_ref"
+      ]
+    },
+    "GateConsumption": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "authorization_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "commitment_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "receipt_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "logical_execution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "gate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "consumption_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "control_snapshot_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "consumed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "dispatch_deadline": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "precondition_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "authorization_ref",
+        "commitment_ref",
+        "receipt_ref",
+        "attempt_id",
+        "logical_execution_id",
+        "gate_id",
+        "consumption_id",
+        "generation",
+        "control_snapshot_ref",
+        "consumed_at",
+        "dispatch_deadline",
+        "precondition_ref"
+      ]
+    },
+    "DispatchObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "consumption_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "provider_request_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "transmission_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "transmission_index": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "observer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "observation_point": {
+          "const": "CONTROLLED_EGRESS_WRITE"
+        },
+        "wire_request_commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "observed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        }
+      },
+      "required": [
+        "consumption_ref",
+        "provider_request_ref",
+        "attempt_id",
+        "transmission_id",
+        "transmission_index",
+        "generation",
+        "observer_id",
+        "observation_point",
+        "wire_request_commitment",
+        "observed_at"
+      ]
+    },
+    "StopObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "GATE_DENIED",
+            "CANCELLED",
+            "DEADLINE_EXPIRED",
+            "LEASE_LOST",
+            "TIMEOUT",
+            "TRANSPORT_ERROR"
+          ]
+        },
+        "disposition": {
+          "type": "string",
+          "enum": [
+            "NO_DISPATCH_ATTESTED",
+            "DISPATCH_UNCERTAIN"
+          ]
+        },
+        "scope_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "observed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "reason",
+        "disposition",
+        "scope_ref",
+        "observed_at"
+      ]
+    },
+    "OutcomeObservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "provider_event_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "provider_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "account_ref": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "TEST",
+            "PRODUCTION"
+          ]
+        },
+        "resource_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "provider_operation_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "request_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "predicate_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "observation_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "provenance_method": {
+          "type": "string",
+          "enum": [
+            "SELF_REPORT",
+            "RUNTIME_CAPTURE",
+            "SHARED_SECRET_HMAC",
+            "PROVIDER_SIGNATURE",
+            "OBSERVER_SIGNATURE"
+          ]
+        },
+        "observer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "observed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "provider_asserted_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "payload_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "proof_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "supersedes_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "attempt_id",
+        "provider_event_id",
+        "provider_id",
+        "account_ref",
+        "environment",
+        "resource_id",
+        "revision",
+        "predicate_ref",
+        "observation_profile_ref",
+        "provenance_method",
+        "observer_id",
+        "observed_at",
+        "payload_ref",
+        "proof_refs",
+        "supersedes_refs"
+      ]
+    },
+    "Reconciliation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "query_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "observation_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "query_started_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "query_ended_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "closure": {
+          "type": "string",
+          "enum": [
+            "CONTINUE",
+            "BUDGET_EXHAUSTED",
+            "OPERATOR_STOPPED"
+          ]
+        },
+        "absence_scope_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "query_profile_ref",
+        "observation_refs",
+        "query_started_at",
+        "query_ended_at",
+        "closure"
+      ]
+    },
+    "Checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "through_sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "head_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "issued_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "authority_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "coverage_start": {
+          "const": 1
+        }
+      },
+      "required": [
+        "action_id",
+        "through_sequence",
+        "head_digest",
+        "issued_at",
+        "authority_id",
+        "coverage_start"
+      ]
+    },
+    "PrivateOpening": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "commitment": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "nonce_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "payload_base64": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 16777216,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        },
+        "byte_length": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "commitment",
+        "nonce_base64",
+        "media_type",
+        "payload_base64",
+        "byte_length"
+      ]
+    },
+    "Signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "type": "string",
+          "enum": [
+            "AUTHORIZATION",
+            "CONTROL_SNAPSHOT",
+            "EXECUTION_GATE",
+            "EVIDENCE_SEAL",
+            "OBSERVER",
+            "CHECKPOINT",
+            "REVIEW_PRESENTATION"
+          ]
+        },
+        "key_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "signer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "signed_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "signed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "signature_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{86}==$"
+        }
+      },
+      "required": [
+        "role",
+        "key_id",
+        "signer_id",
+        "signed_ref",
+        "signed_at",
+        "algorithm",
+        "signature_base64"
+      ]
+    },
+    "Event": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "previous_event_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "event_type": {
+          "type": "string",
+          "enum": [
+            "INTENT_RECORDED",
+            "APPROVAL_BOUND",
+            "AUTHORIZATION_ISSUED",
+            "COMMITMENT_RECORDED",
+            "COMMITMENT_SEALED",
+            "GATE_CONSUMED",
+            "DISPATCH_OBSERVED",
+            "STOP_OBSERVED",
+            "OUTCOME_OBSERVED",
+            "RECONCILIATION_RECORDED",
+            "COMPENSATION_LINKED"
+          ]
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "received_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "append_authority_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        }
+      },
+      "required": [
+        "action_id",
+        "sequence",
+        "event_type",
+        "artifact_ref",
+        "received_at",
+        "append_authority_id"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "sequence": {
+                "const": 1
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "previous_event_digest"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "previous_event_digest"
+            ]
+          }
+        }
+      ]
+    },
+    "CompensationLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "original_intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "compensation_intent_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "relation": {
+          "const": "COMPENSATES"
+        },
+        "scope_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "original_intent_ref",
+        "compensation_intent_ref",
+        "relation",
+        "scope_ref"
+      ]
+    },
+    "BundleEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^artifacts/[0-9a-f]{64}\\.bin$"
+        },
+        "raw_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "artifact_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "path",
+        "raw_sha256",
+        "size_bytes",
+        "media_type",
+        "artifact_ref"
+      ]
+    },
+    "MissingDependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifact_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "reason": {
+          "type": "string",
+          "enum": [
+            "PRIVATE",
+            "NOT_COLLECTED",
+            "UNAVAILABLE",
+            "UNSUPPORTED"
+          ]
+        },
+        "required_for": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "INTEGRITY",
+              "AUTHORIZATION",
+              "EXECUTION",
+              "OUTCOME",
+              "COVERAGE"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 5,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "artifact_ref",
+        "reason",
+        "required_for"
+      ]
+    },
+    "BundleManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "declared_scope": {
+          "type": "string",
+          "enum": [
+            "FULL_ACTION",
+            "COMMITMENT_ONLY",
+            "PUBLIC_PROJECTION"
+          ]
+        },
+        "from_sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "through_sequence": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "head_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "checkpoint_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/BundleEntry"
+          },
+          "minItems": 1,
+          "maxItems": 10000
+        },
+        "missing": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/MissingDependency"
+          },
+          "minItems": 0,
+          "maxItems": 1000
+        },
+        "producer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "created_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "evaluator_version": {
+          "const": "1.0.0"
+        }
+      },
+      "required": [
+        "action_id",
+        "declared_scope",
+        "from_sequence",
+        "through_sequence",
+        "head_digest",
+        "entries",
+        "missing",
+        "producer_id",
+        "created_at",
+        "evaluator_version"
+      ]
+    },
+    "KeyPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "signer_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "AUTHORIZATION",
+            "CONTROL_SNAPSHOT",
+            "EXECUTION_GATE",
+            "EVIDENCE_SEAL",
+            "OBSERVER",
+            "CHECKPOINT",
+            "REVIEW_PRESENTATION"
+          ]
+        },
+        "algorithm": {
+          "const": "Ed25519"
+        },
+        "public_key_base64": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$"
+        },
+        "tenant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          },
+          "minItems": 1,
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "valid_from": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "valid_until": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "ACTIVE",
+            "RETIRED",
+            "REVOKED",
+            "COMPROMISED"
+          ]
+        },
+        "status_effective_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "historical_use": {
+          "type": "string",
+          "enum": [
+            "DENY",
+            "ALLOW_WITH_TRUSTED_PREEXISTENCE"
+          ]
+        }
+      },
+      "required": [
+        "key_id",
+        "signer_id",
+        "role",
+        "algorithm",
+        "public_key_base64",
+        "tenant_ids",
+        "valid_from",
+        "valid_until",
+        "status",
+        "status_effective_at",
+        "historical_use"
+      ]
+    },
+    "TrustPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "policy_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "policy_version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "accepted_contract_versions": {
+          "type": "array",
+          "items": {
+            "const": "1.0.0"
+          },
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "keys": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyPolicy"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        },
+        "tsa_trust_material_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "qualified_tsa_material_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "allowed_observation_profile_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "allowed_control_profile_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "max_control_age_ms": {
+          "const": 5000
+        },
+        "max_clock_uncertainty_ms": {
+          "const": 250
+        },
+        "max_dispatch_lease_ms": {
+          "const": 2000
+        },
+        "max_authorization_lifetime_ms": {
+          "const": 60000
+        },
+        "offline_latestness": {
+          "const": "AS_OF_TRUSTED_CHECKPOINT_ONLY"
+        },
+        "policy_bindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/PolicyBinding"
+          },
+          "minItems": 1,
+          "maxItems": 1000
+        }
+      },
+      "required": [
+        "policy_id",
+        "policy_version",
+        "accepted_contract_versions",
+        "keys",
+        "tsa_trust_material_refs",
+        "qualified_tsa_material_refs",
+        "allowed_observation_profile_refs",
+        "allowed_control_profile_refs",
+        "max_control_age_ms",
+        "max_clock_uncertainty_ms",
+        "max_dispatch_lease_ms",
+        "max_authorization_lifetime_ms",
+        "offline_latestness",
+        "policy_bindings"
+      ]
+    },
+    "PolicyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tenant_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "principal_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "policy_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "control_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "outcome_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "credential_scope_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "principal_id",
+        "operation",
+        "policy_ref",
+        "control_profile_ref",
+        "outcome_profile_ref",
+        "credential_scope_ref"
+      ]
+    },
+    "ControlProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "DESIGN_TARGET",
+            "DEPLOYMENT_QUALIFIED"
+          ]
+        },
+        "gate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "adapter": {
+          "$ref": "#/$defs/Adapter"
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "credential_holder": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "egress_boundary": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "direct_access_policy": {
+          "const": "DENY_WITHIN_DECLARED_SCOPE"
+        },
+        "control_authority_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "distributed_freshness": {
+          "const": "BOUNDED_SNAPSHOT"
+        },
+        "max_control_age_ms": {
+          "const": 5000
+        },
+        "max_clock_uncertainty_ms": {
+          "const": 250
+        },
+        "max_dispatch_lease_ms": {
+          "const": 2000
+        },
+        "max_authorization_lifetime_ms": {
+          "const": 60000
+        },
+        "atomic_unit": {
+          "const": "JAKROW_CONTROL_LEDGER_TRANSACTION"
+        },
+        "qualification_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 0,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "profile_id",
+        "status",
+        "gate_id",
+        "adapter",
+        "operation",
+        "credential_holder",
+        "egress_boundary",
+        "direct_access_policy",
+        "control_authority_id",
+        "distributed_freshness",
+        "max_control_age_ms",
+        "max_clock_uncertainty_ms",
+        "max_dispatch_lease_ms",
+        "max_authorization_lifetime_ms",
+        "atomic_unit",
+        "qualification_refs"
+      ]
+    },
+    "OutcomeProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "FIXTURE_ONLY",
+            "CONTRACT_CANDIDATE",
+            "DEPLOYMENT_QUALIFIED"
+          ]
+        },
+        "provider_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "environment": {
+          "type": "string",
+          "enum": [
+            "TEST",
+            "PRODUCTION"
+          ]
+        },
+        "operation": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "allowed_methods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "RUNTIME_CAPTURE",
+              "SHARED_SECRET_HMAC",
+              "PROVIDER_SIGNATURE",
+              "OBSERVER_SIGNATURE"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true
+        },
+        "account_binding_required": {
+          "const": true
+        },
+        "operation_binding_required": {
+          "const": true
+        },
+        "request_binding_required": {
+          "const": true
+        },
+        "predicate_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "attribution_rule_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "revision_order_rule_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "absence_rule_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "idempotency_contract_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "max_transmissions": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9007199254740991
+        },
+        "query_budget": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "offline_confirmation": {
+          "type": "string",
+          "enum": [
+            "NOT_SUPPORTED",
+            "PROVIDER_SIGNATURE",
+            "OBSERVER_ATTESTATION"
+          ]
+        },
+        "specification_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "minItems": 1,
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "profile_id",
+        "status",
+        "provider_id",
+        "environment",
+        "operation",
+        "allowed_methods",
+        "account_binding_required",
+        "operation_binding_required",
+        "request_binding_required",
+        "predicate_ref",
+        "attribution_rule_ref",
+        "revision_order_rule_ref",
+        "absence_rule_ref",
+        "idempotency_contract_ref",
+        "max_transmissions",
+        "query_budget",
+        "offline_confirmation",
+        "specification_refs"
+      ]
+    },
+    "Predicate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "predicate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "version": {
+          "const": "1"
+        },
+        "operator": {
+          "const": "ALL_TYPED_EQUALS"
+        },
+        "clauses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^/(?:[A-Za-z0-9_.:-]+/)*[A-Za-z0-9_.:-]+$"
+              },
+              "value_type": {
+                "type": "string",
+                "enum": [
+                  "STRING",
+                  "BOOLEAN",
+                  "UNSIGNED_INTEGER"
+                ]
+              },
+              "expected": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4096
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                ]
+              }
+            },
+            "required": [
+              "path",
+              "value_type",
+              "expected"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 100
+        },
+        "terminal_failure_values": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096
+          },
+          "minItems": 0,
+          "maxItems": 100
+        },
+        "source_status_path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        }
+      },
+      "required": [
+        "predicate_id",
+        "version",
+        "operator",
+        "clauses",
+        "terminal_failure_values",
+        "source_status_path"
+      ]
+    },
+    "Projection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evaluator_version": {
+          "const": "1.0.0"
+        },
+        "input_set_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "trust_policy_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "reference_time": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "integrity": {
+          "type": "string",
+          "enum": [
+            "VALID",
+            "INVALID",
+            "INCOMPLETE",
+            "UNSUPPORTED"
+          ]
+        },
+        "authorization": {
+          "type": "string",
+          "enum": [
+            "SATISFIED_AS_OF_CONTROL_POINT",
+            "DENIED",
+            "INDETERMINATE",
+            "UNSUPPORTED"
+          ]
+        },
+        "commitment": {
+          "type": "string",
+          "enum": [
+            "SEALED",
+            "NOT_ESTABLISHED",
+            "UNVERIFIABLE"
+          ]
+        },
+        "consumption": {
+          "type": "string",
+          "enum": [
+            "CONSUMED",
+            "NOT_ESTABLISHED",
+            "UNVERIFIABLE"
+          ]
+        },
+        "dispatch": {
+          "type": "string",
+          "enum": [
+            "OBSERVED",
+            "NO_DISPATCH_ATTESTED",
+            "UNKNOWN",
+            "NOT_ESTABLISHED",
+            "CONFLICT",
+            "UNVERIFIABLE"
+          ]
+        },
+        "outcome": {
+          "type": "string",
+          "enum": [
+            "NOT_OBSERVED",
+            "OBSERVED",
+            "EXTERNALLY_CONFIRMED",
+            "FAILED",
+            "INDETERMINATE"
+          ]
+        },
+        "effect": {
+          "type": "string",
+          "enum": [
+            "NONE_ATTESTED",
+            "PARTIAL",
+            "PRESENT",
+            "UNKNOWN"
+          ]
+        },
+        "attribution": {
+          "type": "string",
+          "enum": [
+            "BOUND_TO_ACTION",
+            "STATE_ONLY",
+            "UNESTABLISHED"
+          ]
+        },
+        "coverage": {
+          "type": "string",
+          "enum": [
+            "COMPLETE_TO_CHECKPOINT",
+            "PARTIAL",
+            "UNKNOWN"
+          ]
+        },
+        "latestness": {
+          "type": "string",
+          "enum": [
+            "AS_OF_CHECKPOINT",
+            "UNKNOWN"
+          ]
+        },
+        "reason_codes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          },
+          "minItems": 0,
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "missing_requirements": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+          },
+          "minItems": 0,
+          "maxItems": 1000,
+          "uniqueItems": true
+        },
+        "safe_next_steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "RECOVER_SEAL_RECEIPT",
+              "QUERY_ONLY",
+              "NO_RETRY",
+              "SAFE_SAME_REQUEST_RETRANSMISSION",
+              "CONTINUE_PRE_DISPATCH_VALIDATION",
+              "NO_ACTION"
+            ]
+          },
+          "minItems": 1,
+          "maxItems": 6,
+          "uniqueItems": true
+        },
+        "confirmation_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "confirmed_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "confirmation_method": {
+          "type": "string",
+          "enum": [
+            "PROVIDER_SIGNATURE",
+            "OBSERVER_SIGNATURE"
+          ]
+        }
+      },
+      "required": [
+        "evaluator_version",
+        "input_set_digest",
+        "trust_policy_digest",
+        "reference_time",
+        "integrity",
+        "authorization",
+        "commitment",
+        "consumption",
+        "dispatch",
+        "outcome",
+        "effect",
+        "attribution",
+        "coverage",
+        "latestness",
+        "reason_codes",
+        "missing_requirements",
+        "safe_next_steps"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "outcome": {
+                "const": "EXTERNALLY_CONFIRMED"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "confirmation_profile_ref",
+              "confirmed_at",
+              "confirmation_method"
+            ]
+          }
+        }
+      ]
+    },
+    "Artifact": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "intent"
+            },
+            "body": {
+              "$ref": "#/$defs/Intent"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "review_presentation"
+            },
+            "body": {
+              "$ref": "#/$defs/ReviewPresentation"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "review_acknowledgement"
+            },
+            "body": {
+              "$ref": "#/$defs/ReviewAcknowledgement"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "approval_binding"
+            },
+            "body": {
+              "$ref": "#/$defs/ApprovalBinding"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "authorization"
+            },
+            "body": {
+              "$ref": "#/$defs/Authorization"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "provider_request"
+            },
+            "body": {
+              "$ref": "#/$defs/ProviderRequest"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "commitment"
+            },
+            "body": {
+              "$ref": "#/$defs/Commitment"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "seal_receipt"
+            },
+            "body": {
+              "$ref": "#/$defs/SealReceipt"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "control_snapshot"
+            },
+            "body": {
+              "$ref": "#/$defs/ControlSnapshot"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "gate_consumption"
+            },
+            "body": {
+              "$ref": "#/$defs/GateConsumption"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "dispatch_observation"
+            },
+            "body": {
+              "$ref": "#/$defs/DispatchObservation"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "stop_observation"
+            },
+            "body": {
+              "$ref": "#/$defs/StopObservation"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "outcome_observation"
+            },
+            "body": {
+              "$ref": "#/$defs/OutcomeObservation"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "reconciliation"
+            },
+            "body": {
+              "$ref": "#/$defs/Reconciliation"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "checkpoint"
+            },
+            "body": {
+              "$ref": "#/$defs/Checkpoint"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "private_opening"
+            },
+            "body": {
+              "$ref": "#/$defs/PrivateOpening"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "signature"
+            },
+            "body": {
+              "$ref": "#/$defs/Signature"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "event"
+            },
+            "body": {
+              "$ref": "#/$defs/Event"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "compensation_link"
+            },
+            "body": {
+              "$ref": "#/$defs/CompensationLink"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "bundle_manifest"
+            },
+            "body": {
+              "$ref": "#/$defs/BundleManifest"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "trust_policy"
+            },
+            "body": {
+              "$ref": "#/$defs/TrustPolicy"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "control_profile"
+            },
+            "body": {
+              "$ref": "#/$defs/ControlProfile"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "outcome_profile"
+            },
+            "body": {
+              "$ref": "#/$defs/OutcomeProfile"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "predicate"
+            },
+            "body": {
+              "$ref": "#/$defs/Predicate"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "pc_boundary_profile"
+            },
+            "body": {
+              "$ref": "#/$defs/PcBoundaryProfile"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "deployment_binding"
+            },
+            "body": {
+              "$ref": "#/$defs/DeploymentBinding"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "s3_create_only_profile"
+            },
+            "body": {
+              "$ref": "#/$defs/S3CreateOnlyProfile"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "s3_request_descriptor"
+            },
+            "body": {
+              "$ref": "#/$defs/S3RequestDescriptor"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "contract_version": {
+              "const": "1.0.0"
+            },
+            "canonicalization": {
+              "const": "aurora.stage_g.canonical.ascii.v1"
+            },
+            "tenant_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "artifact_id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            },
+            "kind": {
+              "const": "s3_readback"
+            },
+            "body": {
+              "$ref": "#/$defs/S3Readback"
+            },
+            "digest": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            }
+          },
+          "required": [
+            "contract_version",
+            "canonicalization",
+            "tenant_id",
+            "artifact_id",
+            "kind",
+            "body",
+            "digest"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "PcBoundaryProfile": {
+      "type": "object",
+      "properties": {
+        "profile_id": {
+          "const": "g.pc.dual_vm.v1"
+        },
+        "isolation": {
+          "const": "DUAL_VM"
+        },
+        "runner_privilege": {
+          "const": "UNPRIVILEGED_NO_PROVIDER_SECRET"
+        },
+        "executor_privilege": {
+          "const": "DEDICATED_TRUSTED_SERVICE"
+        },
+        "credential_holder": {
+          "const": "EXECUTOR_VM_ONLY"
+        },
+        "request_channel": {
+          "const": "MUTUAL_AUTHENTICATION_PINNED_PEERS"
+        },
+        "runner_provider_egress": {
+          "const": "DENY"
+        },
+        "shared_secret_mounts": {
+          "const": "DENY"
+        },
+        "executor_arbitrary_code": {
+          "const": "DENY"
+        },
+        "restart_policy": {
+          "const": "RECONCILE_NO_WRITE_REPLAY"
+        },
+        "snapshot_restore_policy": {
+          "const": "QUARANTINE_REENROLL_NEW_GATE_ID"
+        },
+        "rule_document_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "profile_id",
+        "isolation",
+        "runner_privilege",
+        "executor_privilege",
+        "credential_holder",
+        "request_channel",
+        "runner_provider_egress",
+        "shared_secret_mounts",
+        "executor_arbitrary_code",
+        "restart_policy",
+        "snapshot_restore_policy",
+        "rule_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "DeploymentBinding": {
+      "type": "object",
+      "properties": {
+        "binding_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "qualification": {
+          "type": "string",
+          "enum": [
+            "UNQUALIFIED",
+            "QUALIFIED"
+          ]
+        },
+        "pc_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "s3_profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "gate_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "executor_build_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "adapter_build_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "credential_scope_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "partition": {
+          "const": "aws"
+        },
+        "region": {
+          "type": "string",
+          "pattern": "^[a-z]{2}-[a-z]+-[1-9][0-9]*$"
+        },
+        "bucket_owner_account_id": {
+          "type": "string",
+          "pattern": "^[0-9]{12}$"
+        },
+        "bucket": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 63,
+          "pattern": "^aurora-g-test-[a-z0-9][a-z0-9-]*[a-z0-9]$"
+        },
+        "prefix": {
+          "const": "stage-g/"
+        },
+        "environment": {
+          "const": "TEST"
+        },
+        "endpoint_mode": {
+          "const": "REGIONAL_VIRTUAL_HOSTED_HTTPS"
+        },
+        "bucket_versioning": {
+          "const": "NEVER_ENABLED"
+        },
+        "bucket_encryption": {
+          "const": "SSE_S3_AES256"
+        },
+        "public_access": {
+          "const": "BLOCK_ALL"
+        },
+        "other_writers": {
+          "const": "DENY"
+        },
+        "runtime_delete_permission": {
+          "const": "DENY"
+        },
+        "qualification_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Reference"
+          },
+          "maxItems": 100
+        }
+      },
+      "required": [
+        "binding_id",
+        "qualification",
+        "pc_profile_ref",
+        "s3_profile_ref",
+        "gate_id",
+        "executor_build_digest",
+        "adapter_build_digest",
+        "credential_scope_ref",
+        "partition",
+        "region",
+        "bucket_owner_account_id",
+        "bucket",
+        "prefix",
+        "environment",
+        "endpoint_mode",
+        "bucket_versioning",
+        "bucket_encryption",
+        "public_access",
+        "other_writers",
+        "runtime_delete_permission",
+        "qualification_refs"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "qualification": {
+                "const": "QUALIFIED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "qualification_refs": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/Reference"
+                },
+                "maxItems": 100,
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "S3CreateOnlyProfile": {
+      "type": "object",
+      "properties": {
+        "profile_id": {
+          "const": "g.aws_s3.create_only.v1"
+        },
+        "status": {
+          "const": "CONTRACT_CANDIDATE"
+        },
+        "write_operation": {
+          "const": "PutObject"
+        },
+        "read_operation": {
+          "const": "GetObject"
+        },
+        "if_none_match": {
+          "const": "*"
+        },
+        "max_body_bytes": {
+          "const": 16384
+        },
+        "multipart": {
+          "const": false
+        },
+        "redirects": {
+          "const": false
+        },
+        "provider_idempotency_token": {
+          "const": "NONE"
+        },
+        "max_write_transmissions": {
+          "const": 1
+        },
+        "query_offsets_ms": {
+          "const": [
+            0,
+            1000,
+            3000
+          ]
+        },
+        "max_query_transmissions": {
+          "const": 3
+        },
+        "put_timeout_ms": {
+          "const": 5000
+        },
+        "get_timeout_ms": {
+          "const": 5000
+        },
+        "max_reconciliation_elapsed_ms": {
+          "const": 15000
+        },
+        "confirmation_ceiling": {
+          "const": "OBSERVED"
+        },
+        "offline_confirmation": {
+          "const": "NOT_SUPPORTED"
+        },
+        "operation_binding_mode": {
+          "const": "PUT_REQUEST_ID_IF_CAPTURED"
+        },
+        "lost_put_attribution": {
+          "const": "STATE_ONLY"
+        },
+        "rule_document_ref": {
+          "$ref": "#/$defs/Reference"
+        }
+      },
+      "required": [
+        "profile_id",
+        "status",
+        "write_operation",
+        "read_operation",
+        "if_none_match",
+        "max_body_bytes",
+        "multipart",
+        "redirects",
+        "provider_idempotency_token",
+        "max_write_transmissions",
+        "query_offsets_ms",
+        "max_query_transmissions",
+        "put_timeout_ms",
+        "get_timeout_ms",
+        "max_reconciliation_elapsed_ms",
+        "confirmation_ceiling",
+        "offline_confirmation",
+        "operation_binding_mode",
+        "lost_put_attribution",
+        "rule_document_ref"
+      ],
+      "additionalProperties": false
+    },
+    "S3RequestDescriptor": {
+      "type": "object",
+      "properties": {
+        "deployment_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "profile_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "action_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "logical_execution_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "resource_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "account_id": {
+          "type": "string",
+          "pattern": "^[0-9]{12}$"
+        },
+        "region": {
+          "type": "string",
+          "pattern": "^[a-z]{2}-[a-z]+-[1-9][0-9]*$"
+        },
+        "bucket": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 63,
+          "pattern": "^aurora-g-test-[a-z0-9][a-z0-9-]*[a-z0-9]$"
+        },
+        "key": {
+          "type": "string",
+          "pattern": "^stage-g/[a-z0-9][a-z0-9-]{0,119}\\.json$"
+        },
+        "method": {
+          "const": "PUT"
+        },
+        "query_string": {
+          "const": ""
+        },
+        "precondition": {
+          "const": "OBJECT_ABSENT"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "payload_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16384
+        },
+        "headers": {
+          "type": "object",
+          "properties": {
+            "content-type": {
+              "const": "application/json"
+            },
+            "if-none-match": {
+              "const": "*"
+            },
+            "x-amz-expected-bucket-owner": {
+              "type": "string",
+              "pattern": "^[0-9]{12}$"
+            },
+            "x-amz-server-side-encryption": {
+              "const": "AES256"
+            },
+            "x-amz-checksum-sha256": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9+/]{43}=$"
+            },
+            "x-amz-meta-aurora-action-id": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+            }
+          },
+          "required": [
+            "content-type",
+            "if-none-match",
+            "x-amz-expected-bucket-owner",
+            "x-amz-server-side-encryption",
+            "x-amz-checksum-sha256",
+            "x-amz-meta-aurora-action-id"
+          ],
+          "additionalProperties": false
+        },
+        "signature_scheme": {
+          "const": "AWS_SIGV4_SHA256_PAYLOAD"
+        },
+        "max_write_transmissions": {
+          "const": 1
+        }
+      },
+      "required": [
+        "deployment_ref",
+        "profile_ref",
+        "action_id",
+        "logical_execution_id",
+        "resource_id",
+        "account_id",
+        "region",
+        "bucket",
+        "key",
+        "method",
+        "query_string",
+        "precondition",
+        "payload_sha256",
+        "payload_bytes",
+        "headers",
+        "signature_scheme",
+        "max_write_transmissions"
+      ],
+      "additionalProperties": false
+    },
+    "S3Readback": {
+      "type": "object",
+      "properties": {
+        "request_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "observation_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$"
+        },
+        "result": {
+          "type": "string",
+          "enum": [
+            "PRESENT",
+            "NOT_FOUND",
+            "ACCESS_DENIED",
+            "TIMEOUT",
+            "UNAVAILABLE"
+          ]
+        },
+        "captured_at": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{6}Z$"
+        },
+        "provenance": {
+          "const": "RUNTIME_CAPTURE"
+        },
+        "exchange_ref": {
+          "$ref": "#/$defs/Reference"
+        },
+        "http_status": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        },
+        "aws_request_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "etag": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "body_base64": {
+          "type": "string",
+          "maxLength": 21848,
+          "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+        },
+        "body_sha256": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "body_bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16384
+        }
+      },
+      "required": [
+        "request_ref",
+        "observation_id",
+        "result",
+        "captured_at",
+        "provenance",
+        "exchange_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "result": {
+                "const": "PRESENT"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "http_status",
+              "aws_request_id",
+              "etag",
+              "body_base64",
+              "body_sha256",
+              "body_bytes"
+            ],
+            "properties": {
+              "http_status": {
+                "const": 200
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "$ref": "#/$defs/Artifact"
+}

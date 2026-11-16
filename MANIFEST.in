@@ -2,6 +2,7 @@ include README.md
 include LICENSE
 include NOTICE
 include DISTRIBUTION_APPROVAL.txt
+include G5_LOCAL_CANDIDATE.json
 include NON_CLAIMS.txt
 include API_REFERENCE.md
 include QUICKSTART.md

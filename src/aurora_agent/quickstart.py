@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
+import time
 import uuid
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -16,6 +17,8 @@ from .ingestion_http import IngestionTransportError, UrllibTransport
 DEFAULT_API_BASE_URL = "https://aurora-mvp-production.up.railway.app"
 DEFAULT_FRONTEND_URL = "https://auroraseal.com"
 QUICKSTART_RELEASE_ID = f"aurora-agent-{__version__}"
+TIMESTAMP_POLL_SECONDS = 5
+TIMESTAMP_WAIT_SECONDS = 90
 
 
 class QuickstartError(RuntimeError):
@@ -195,7 +198,7 @@ class QuickstartRunner:
         except IngestionTransportError as exc:
             raise QuickstartError(f"Could not create the sample record: {exc}") from exc
         payload = _json_body(response.body)
-        if response.status not in {200, 201}:
+        if response.status not in {200, 201, 202}:
             raise QuickstartError(
                 f"Sample record creation failed with HTTP {response.status}: "
                 f"{_error_detail(payload)}"
@@ -204,7 +207,55 @@ class QuickstartRunner:
         record_id = payload.get("id") or payload.get("internal_decision_id")
         if not atp_id or not record_id:
             raise QuickstartError("Sample record response did not include record identifiers")
+        if payload.get("seal_state") == "TIMESTAMP_PENDING":
+            return self._wait_for_sample_timestamp(str(record_id), str(atp_id))
+        if response.status == 202 or not self._sample_timestamp_sealed(payload):
+            raise QuickstartError("Sample record does not have a verified external timestamp")
         return payload
+
+    @staticmethod
+    def _sample_timestamp_sealed(payload: dict[str, Any]) -> bool:
+        state = payload.get("seal_state")
+        if state is not None:
+            return state == "SEALED"
+        # Earlier servers report evidence fields individually.
+        return (
+            bool(payload.get("sealed_at"))
+            and payload.get("tsa_response_received") is True
+            and payload.get("tsa_signature_verified") is True
+        )
+
+    def _wait_for_sample_timestamp(self, record_id: str, atp_id: str) -> dict[str, Any]:
+        endpoint = f"/v1/audit-records/{quote(record_id, safe='')}"
+        deadline = time.monotonic() + TIMESTAMP_WAIT_SECONDS
+        while (remaining := deadline - time.monotonic()) > 0:
+            time.sleep(min(TIMESTAMP_POLL_SECONDS, remaining))
+            if time.monotonic() >= deadline:
+                break
+            try:
+                response = self.transport.request(
+                    method="GET", endpoint=endpoint, body=b"", idempotency_key=None
+                )
+            except IngestionTransportError as exc:
+                raise QuickstartError(f"Could not check sample timestamp status: {exc}") from exc
+            payload = _json_body(response.body)
+            if response.status != 200:
+                raise QuickstartError(
+                    f"Sample timestamp status failed with HTTP {response.status}: {_error_detail(payload)}"
+                )
+            if (payload.get("id") or payload.get("internal_decision_id")) != record_id or (
+                payload.get("atp_id") or payload.get("decision_id")
+            ) != atp_id:
+                raise QuickstartError("Sample timestamp status returned an unexpected record")
+            state = payload.get("seal_state")
+            if state == "SEALED":
+                return payload
+            if state != "TIMESTAMP_PENDING":
+                raise QuickstartError("Sample record does not have a verified external timestamp")
+        raise QuickstartError(
+            f"Sample record {record_id} ({atp_id}) is still TIMESTAMP_PENDING after "
+            f"{TIMESTAMP_WAIT_SECONDS} seconds."
+        )
 
     def run(self) -> QuickstartResult:
         suffix = self.id_factory()

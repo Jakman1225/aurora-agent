@@ -41,12 +41,12 @@ It provides seven compatible surfaces:
 - ordered, crash-recoverable delivery with stable idempotency keys;
 - generic Python capture surface;
 - framework-light Claude Agent SDK adapter;
-- direct observer integration with the JAKROW D3 `execute_operation` path;
+- direct observer integration with JAKROW's `execute_operation` path;
 - final AURORA graph linked to an existing sealed AURORA record.
 
 ## Self-serve quickstart
 
-After creating a Sandbox API key at
+After creating a Sandbox API key with read and write access at
 `https://auroraseal.com/app/quickstart`:
 
 ```bash
@@ -55,9 +55,13 @@ export AURORA_API_KEY="<shown-once-key>"
 aurora-agent quickstart
 ```
 
-The command creates a controlled sample record, commits evidence locally before
-a local SQLite ledger operation, finalizes the graph, verifies it server-side,
-and prints the authenticated Viewer URL.
+With SDK 0.10.0 and a compatible AURORA backend, the command creates a sample
+record and waits up to 90 seconds for its external timestamp to be verified.
+Once the record is sealed, it commits evidence locally before a local SQLite
+ledger operation, finalizes the graph, verifies it server-side, and prints the
+authenticated Viewer URL. If the timestamp is still pending when the wait
+ends, the command reports the record ID so you can check its status. Use the
+0.10.0 candidate wheel to test this flow before the public release.
 
 It does not perform an external payment, message, purchase, or customer
 operation. The default capture mode is `DIGEST_ONLY`; the API key is not
@@ -76,11 +80,12 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.9.3` |
+| version | `0.10.0` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
 
+- [RELEASE_NOTES_0.10.0.md](RELEASE_NOTES_0.10.0.md)
 - [RELEASE_NOTES_0.9.3.md](RELEASE_NOTES_0.9.3.md)
 - [RELEASE_NOTES_0.9.2.md](RELEASE_NOTES_0.9.2.md)
 - [`AMENDMENT_QUICKSTART.md`](AMENDMENT_QUICKSTART.md)
@@ -145,3 +150,18 @@ outside this SDK are proprietary and are not included in that grant. See
 before 0.3.0.
 
 AURORA and JAKROW are marks of Krow Industries.
+
+## Execution evidence clients
+
+Install the `stage-g` extra to use the execution evidence clients on Python
+3.11–3.13. `StageGClient` registers evidence, reads approval and execution
+status, seals records, exports verification bundles, and manages public links.
+
+`ExecutorClient` and `GateAdapter` connect to an executor over mutual TLS.
+Keep the adapter's journal on persistent storage. During recovery, the adapter
+reads status and observations without resending the execution request. Human
+review requires a signed-in reviewer in the browser workspace.
+
+Use the standalone verifier with independently obtained trust material for
+offline bundle verification. An HTTP success response or a sealed record
+alone does not establish that an external provider completed an operation.

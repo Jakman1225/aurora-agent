@@ -28,6 +28,7 @@ Documentation = "https://auroraseal.com/quickstart"
 
 [project.optional-dependencies]
 test = ["pytest==9.0.2"]
+stage-g = ["jsonschema==4.26.0"]
 
 [project.scripts]
 aurora-agent = "aurora_agent.command:main"
@@ -43,3 +44,5 @@ version = { attr = "aurora_agent._version.__version__" }
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+[tool.setuptools.package-data]
+"aurora_agent.stage_g" = ["schemas/*.json"]

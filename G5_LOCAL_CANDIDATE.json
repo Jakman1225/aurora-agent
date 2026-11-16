@@ -1,0 +1,7 @@
+{
+  "version": "0.10.0",
+  "stage": "G-5",
+  "distribution": "LOCAL_PATCH_ONLY",
+  "public_distribution_approved": false,
+  "historical_public_release": "0.9.3"
+}

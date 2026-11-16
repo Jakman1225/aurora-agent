@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import tomllib
+import json
 from pathlib import Path
 
 from aurora_agent import __version__
@@ -39,8 +40,13 @@ def test_public_distribution_approval_record_matches_release() -> None:
     )
 
     assert "AURORA-AGENT PUBLIC DISTRIBUTION APPROVAL RECORD" in approval
-    assert f"Approved version: {__version__}" in approval
-    assert f"Approved release tag: v{__version__}" in approval
+    candidate = json.loads((PACKAGE_ROOT / "G5_LOCAL_CANDIDATE.json").read_text(encoding="utf-8"))
+    assert candidate["version"] == __version__
+    assert candidate["distribution"] == "LOCAL_PATCH_ONLY"
+    assert candidate["public_distribution_approved"] is False
+    assert f"Approved version: {candidate['historical_public_release']}" in approval
+    assert f"Approved release tag: v{candidate['historical_public_release']}" in approval
+    assert f"Approved version: {__version__}" not in approval
     assert "SPDX: Apache-2.0" in approval
     assert "AURORA backend" in approval
     assert "JAKROW repository content and components not included" in approval
