@@ -13,3 +13,5 @@ reports/
 
 # Self-serve quickstart runtime artifacts
 .aurora-quickstart/
+
+.aurora_g5_backups/
