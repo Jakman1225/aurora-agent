@@ -41,7 +41,7 @@ It provides seven compatible surfaces:
 - ordered, crash-recoverable delivery with stable idempotency keys;
 - generic Python capture surface;
 - framework-light Claude Agent SDK adapter;
-- direct observer integration with the JAKROW D3 `execute_operation` path;
+- direct observer integration with the JAKROW `execute_operation` path;
 - final AURORA graph linked to an existing sealed AURORA record.
 
 ## Self-serve quickstart
@@ -55,9 +55,10 @@ export AURORA_API_KEY="<shown-once-key>"
 aurora-agent quickstart
 ```
 
-The command creates a controlled sample record, commits evidence locally before
-a local SQLite ledger operation, finalizes the graph, verifies it server-side,
-and prints the authenticated Viewer URL.
+The command creates a controlled sample record and waits for a verified
+external timestamp if sealing is pending. After sealing, it commits evidence
+locally before a local SQLite ledger operation, finalizes the graph, verifies
+it server-side, and prints the authenticated Viewer URL.
 
 It does not perform an external payment, message, purchase, or customer
 operation. The default capture mode is `DIGEST_ONLY`; the API key is not
@@ -76,11 +77,12 @@ aurora-agent outbox flush --outbox PATH
 | --- | --- |
 | distribution | `aurora-agent` |
 | import | `aurora_agent` |
-| version | `0.9.3` |
+| version | `0.9.4` |
 | Python | `>=3.11,<3.14` |
 
 ## Documentation
 
+- [RELEASE_NOTES_0.9.4.md](RELEASE_NOTES_0.9.4.md)
 - [RELEASE_NOTES_0.9.3.md](RELEASE_NOTES_0.9.3.md)
 - [RELEASE_NOTES_0.9.2.md](RELEASE_NOTES_0.9.2.md)
 - [`AMENDMENT_QUICKSTART.md`](AMENDMENT_QUICKSTART.md)

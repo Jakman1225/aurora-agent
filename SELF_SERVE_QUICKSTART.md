@@ -40,7 +40,9 @@ Viewer URL                      : https://auroraseal.com/verify-app/...
 
 ## What the command does
 
-- creates one controlled sample sealed record through `/v1/audit-records`;
+- creates one controlled sample record through `/v1/audit-records`;
+- checks for a verified external timestamp during a 90-second polling window
+  if sealing is pending;
 - queues `authorization`, `tool_request`, and `tool_execution` evidence locally;
 - performs one local SQLite-ledger operation;
 - queues `tool_outcome` and `final_decision`;
